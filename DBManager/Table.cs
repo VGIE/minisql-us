@@ -14,20 +14,23 @@ namespace DbManager
         public Table(string name, List<ColumnDefinition> columns)
         {
             //TODO DEADLINE 1.A: Initialize member variables
-            
+            ColumnDefinitions = columns;
+            Name = name;
         }
 
         public Row GetRow(int i)
         {
             //TODO DEADLINE 1.A: Return the i-th row
             
-            return null;
+            return Rows[i];
             
         }
 
         public void AddRow(Row row)
         {
             //TODO DEADLINE 1.A: Add a new row
+
+
             
         }
 
