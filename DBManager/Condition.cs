@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Globalization;
 using System.Text;
 using DbManager;
@@ -15,7 +16,9 @@ namespace DbManager
         public Condition(string column, string op, string literalValue)
         {
             //TODO DEADLINE 1A: Initialize member variables
-            
+            column = this.ColumnName;
+            op = this.Operator;
+            literalValue = this.LiteralValue;
         }
 
 
@@ -27,10 +30,57 @@ namespace DbManager
             //"9" > "10"
             //9 < 10
             //Convert first the strings to the appropriate type and then compare (depending on the operator of the condition)
+           
+            
+            if(type is string)
+            {
+                int comparacion = value.CompareTo(LiteralValue);
+                if(comparacion == 1)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }else if (type is double)
+            {
+                int valor = Int32.Parse(value);
+                int valor2 = Int32.Parse(LiteralValue);
+                int comparacion = valor.CompareTo(valor2);
+                if (comparacion == 1)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
 
-            
-            return false;
-            
+
+            }
+            else if(type is int)
+            {
+                 double valor = Double.Parse(value);
+                double valor2 = Int32.Parse(LiteralValue);
+                int comparacion = valor.CompareTo(valor2);
+                if (comparacion == 1)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+                 return false;
+
         }
+
     }
+
 }
+
+
+
