@@ -30,7 +30,7 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Add a new row
 
-
+            Rows.Add(row);
             
         }
 
@@ -38,7 +38,7 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Return the number of rows
             
-            return 0;
+            return Rows.Count;
             
         }
 
@@ -46,7 +46,7 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Return the i-th column
             
-            return null;
+            return ColumnDefinitions[i];
             
         }
 
@@ -54,7 +54,7 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Return the number of columns
             
-            return 0;
+            return ColumnDefinitions.Count;
             
         }
         
@@ -62,13 +62,28 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Return the number of columns
             
+            for (int i = 0; i < ColumnDefinitions.Count; i++)
+            {
+                if (ColumnDefinitions[i].Name.Equals(column))
+                {
+                    return ColumnDefinitions[i];
+                }
+            }
             return null;
             
         }
         public int ColumnIndexByName(string columnName)
         {
             //TODO DEADLINE 1.A: Return the zero-based index of the column named columnName
-            
+
+            for (int i = 0; i < ColumnDefinitions.Count; i++)
+            {
+                if (ColumnDefinitions[i].Name.Equals(columnName))
+                {
+                    return i;
+                }
+            }
+
             return -1;
             
         }

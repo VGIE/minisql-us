@@ -6,6 +6,9 @@ namespace OurTests
     
     public class TableTests
     {
+
+        private Table tablaTest;
+        private List<ColumnDefinition> columns;
         private Row CreateTestRow()
         {
             List<ColumnDefinition> columns = new List<ColumnDefinition>();
