@@ -1,3 +1,5 @@
+using DbManager;
+
 namespace OurTests
 {
     public class ColumnDefinitionsTests
@@ -10,5 +12,16 @@ namespace OurTests
 
         }
         */
+
+        [Fact]
+        public void TestInitialization()
+        {
+            ColumnDefinition columnaPrueba = new ColumnDefinition(ColumnDefinition.DataType.String,"Rickinillo");
+            
+            Assert.NotNull(columnaPrueba);
+            Assert.Equal("Rickinillo", columnaPrueba.Name);
+            Assert.Equal(ColumnDefinition.DataType.String, columnaPrueba.Type);
+        }
+    
     }
 }
