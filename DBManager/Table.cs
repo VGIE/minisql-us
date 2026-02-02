@@ -79,9 +79,46 @@ namespace DbManager
             //"['Name','Age']{'Adolfo','23'}{'Jacinto','24'}" <- two columns, two rows
             //"" <- no columns, no rows
             //"['Name']" <- one column, no rows
+
             
-            return null;
-            
+            if (ColumnDefinitions != null && ColumnDefinitions.Count < 0)
+            {
+                String result = "[";
+                ColumnDefinition last = ColumnDefinitions[ColumnDefinitions.Count - 1];
+                List<String> ColumnNames = new List<String>();
+                foreach (ColumnDefinition c in ColumnDefinitions)
+                {
+                    ColumnNames.Add(c.Name);
+                    result += "'" + c.Name + "'";
+                    if (last != c)
+                    {
+                        result = result + ",";
+                    }
+
+                }
+                result += "]";
+                if (Rows != null)
+                {
+                    foreach (Row row in Rows)
+                    {
+                        result += "{";
+                        foreach (String name in ColumnNames)
+                        {
+                            result += "'" + row.GetValue(name) + "'";
+                            if (!name.Equals(last.Name))
+                            {
+                                result += ",";
+                            }
+                        }
+                        result += "}";
+                    }
+                }
+                    return result;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public void DeleteIthRow(int row)
