@@ -81,7 +81,7 @@ namespace DbManager
             //"['Name']" <- one column, no rows
 
             
-            if (ColumnDefinitions != null && ColumnDefinitions.Count < 0)
+            if (ColumnDefinitions != null && ColumnDefinitions.Count > 0)
             {
                 String result = "[";
                 ColumnDefinition last = ColumnDefinitions[ColumnDefinitions.Count - 1];
@@ -117,7 +117,7 @@ namespace DbManager
             }
             else
             {
-                return null;
+                return "";
             }
         }
 
