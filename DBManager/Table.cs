@@ -1,6 +1,7 @@
 using DbManager.Parser;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 
 namespace DbManager
 {
@@ -21,7 +22,7 @@ namespace DbManager
         public Row GetRow(int i)
         {
             //TODO DEADLINE 1.A: Return the i-th row
-            
+            if(i> NumRows() - 1 || i<0) { return null; }
             return Rows[i];
             
         }
@@ -45,7 +46,7 @@ namespace DbManager
         public ColumnDefinition GetColumn(int i)
         {
             //TODO DEADLINE 1.A: Return the i-th column
-            
+            if(i> NumColumns() - 1 || i < 0) { return null; }
             return ColumnDefinitions[i];
             
         }
@@ -61,7 +62,12 @@ namespace DbManager
         public ColumnDefinition ColumnByName(string column)
         {
             //TODO DEADLINE 1.A: Return the number of columns
+            if (ColumnDefinitions==null || column == null)
+            {
+                return null;
+            }
             
+
             for (int i = 0; i < ColumnDefinitions.Count; i++)
             {
                 if (ColumnDefinitions[i].Name.Equals(column))
@@ -69,13 +75,17 @@ namespace DbManager
                     return ColumnDefinitions[i];
                 }
             }
+
             return null;
             
         }
         public int ColumnIndexByName(string columnName)
         {
             //TODO DEADLINE 1.A: Return the zero-based index of the column named columnName
-
+            if (ColumnDefinitions == null || columnName == null)
+            {
+                return -1;
+            }
             for (int i = 0; i < ColumnDefinitions.Count; i++)
             {
                 if (ColumnDefinitions[i].Name.Equals(columnName))
