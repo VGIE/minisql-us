@@ -90,5 +90,85 @@ namespace OurTests
             Assert.Equal("['Name','Age']{'Albert','45'}{'Maria','32'}", table2.ToString());
 
         }
+
+        [Fact]
+        public void deleteithrowTest()
+        {
+            List<ColumnDefinition> columnDefinitions = new List<ColumnDefinition>();
+            columnDefinitions.Add(new ColumnDefinition(ColumnDefinition.DataType.String, "name"));
+            columnDefinitions.Add(new ColumnDefinition(ColumnDefinition.DataType.Int, "age"));
+            Table t = new Table("test", columnDefinitions);
+            
+            List<String> values = new List<String>();
+            values.Add("Mario");
+            values.Add("26");
+            t.AddRow(new Row(columnDefinitions, values));
+
+            values.Clear();
+            values.Add("Carla");
+            values.Add("26");
+            t.AddRow(new Row(columnDefinitions, values));
+
+            values.Clear();
+            values.Add("Ramon");
+            values.Add("19");
+            Row toDelete = new Row(columnDefinitions, values);
+            t.AddRow(toDelete);
+
+            values.Clear();
+            values.Add("Juan");
+            values.Add("81");
+            Row fila = new Row(columnDefinitions, values);
+            t.AddRow(fila);
+
+            Assert.Equal(toDelete, t.GetRow(2));
+            t.DeleteIthRow(2);
+            Assert.Equal(3, t.NumRows());
+            Assert.Equal(fila, t.GetRow(2));
+        }
+
+
+        [Fact]
+        public void DeleteWhereTest()
+        {
+            List<ColumnDefinition> columnDefinitions = new List<ColumnDefinition>();
+            columnDefinitions.Add(new ColumnDefinition(ColumnDefinition.DataType.String, "name"));
+            columnDefinitions.Add(new ColumnDefinition(ColumnDefinition.DataType.Int, "age"));
+            Table t = new Table("test", columnDefinitions);
+
+            List<String> values = new List<String>(),
+                values2 = new List<String>(),
+                values3 = new List<String>(),
+                values4 = new List<String>();
+            values.Add("Mario");
+            values.Add("26");
+            t.AddRow(new Row(columnDefinitions, values));
+
+            values2.Add("Carla");
+            values2.Add("19");
+            t.AddRow(new Row(columnDefinitions, values2));
+
+            values3.Add("Ramon");
+            values3.Add("19");
+            Row toDelete = new Row(columnDefinitions, values3);
+            t.AddRow(toDelete);
+
+            values4.Add("Juan");
+            values4.Add("81");
+            Row fila = new Row(columnDefinitions, values4);
+            t.AddRow(fila);
+
+            t.DeleteWhere(new Condition("age", "<", "20"));
+            Assert.Equal(2, t.NumRows());
+            Assert.Equal("Mario", t.GetRow(0).GetValue("name"));
+            Assert.Equal("Juan", t.GetRow(1).GetValue("name"));
+            t.DeleteWhere(new Condition("name", "=", "Juan"));
+            Assert.Equal(1, t.NumRows());
+            Assert.Equal("Mario", t.GetRow(0).GetValue("name"));
+
+            t.DeleteWhere(new Condition("name", "=", "null"));
+            Assert.Equal(1, t.NumRows());
+            Assert.Equal("Mario", t.GetRow(0).GetValue("name"));
+        }
     }
 }

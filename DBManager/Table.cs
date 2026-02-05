@@ -152,22 +152,30 @@ namespace DbManager
         public void DeleteIthRow(int row)
         {
             //TODO DEADLINE 1.A: Delete the i-th row. If there is no i-th row, do nothing
-            Row toDelete = Rows[row];
-            if (toDelete != null)
+            if (!(row >= Rows.Count || row < 0))
             {
-                Rows.Remove(toDelete);
+                Row toDelete = Rows[row];
+                if (toDelete != null)
+                {
+                    Rows.RemoveAt(row);
+                }
             }
         }
 
         private List<int> RowIndicesWhereConditionIsTrue(Condition condition)
         {
             //TODO DEADLINE 1.A: Returns the indices of all the rows where the condition is true. Check Row.IsTrue()
+
             List<int> result = new List<int>();
-            for (int i = 0; i<Rows.Count; i++)
+
+            if (Rows != null)
             {
-                if (Rows[i].IsTrue(condition))
+                for (int i = 0; i < Rows.Count; i++)
                 {
-                    result.Add(i);
+                    if (Rows[i].IsTrue(condition))
+                    {
+                        result.Add(i);
+                    }
                 }
             }
             return result;
@@ -178,9 +186,11 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Delete all rows where the condition is true. Check RowIndicesWhereConditionIsTrue()
             List<int> toDelete = this.RowIndicesWhereConditionIsTrue(condition);
-            for (int i = 0; i<toDelete.Count; i++)
+            toDelete.Sort();
+            int num = toDelete.Count-1;
+            for (int i = num; i>=0; i--)
             {
-                Rows.RemoveAt(i);
+                Rows.RemoveAt(toDelete[i]);
             }
             
         }
