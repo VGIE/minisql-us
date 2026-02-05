@@ -15,7 +15,9 @@ namespace DbManager
         public Condition(string column, string op, string literalValue)
         {
             //TODO DEADLINE 1A: Initialize member variables
-            
+             this.ColumnName = column ;
+             this.Operator = op ;
+             this.LiteralValue = literalValue;
         }
 
 
@@ -28,9 +30,47 @@ namespace DbManager
             //9 < 10
             //Convert first the strings to the appropriate type and then compare (depending on the operator of the condition)
 
-            
-            return false;
-            
+            int resultado = 0;
+
+
+
+            if (type == ColumnDefinition.DataType.String)
+            {
+                resultado = value.CompareTo(LiteralValue);
+            }
+            else if (type == ColumnDefinition.DataType.Int)
+            {
+                int valor = Int32.Parse(value);
+                int valor2 = Int32.Parse(LiteralValue);
+
+                resultado = valor.CompareTo(valor2);
+            }
+            else if (type == ColumnDefinition.DataType.Double)
+            {
+                double valor = Double.Parse(value);
+                double valor2 = Double.Parse(LiteralValue);
+
+                resultado = valor.CompareTo(valor2);
+
+            }
+            if (Operator == ">" && resultado > 0)
+            {
+                return true;
+            }else if (Operator == "=" && resultado == 0)
+            {
+                return true;
+            }else if((Operator == "<" && resultado < 0))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+                
         }
     }
 }
+
+
+
