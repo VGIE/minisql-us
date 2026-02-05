@@ -17,20 +17,43 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Initialize member variables
 
-            
+            if(columnDefinitions.Count == values.Count)
+            {
+              this.ColumnDefinitions=columnDefinitions;
+              this.Values=values;
+            }
         }
-
+    
+            
+        
         public void SetValue(string columnName, string value)
         {
             //TODO DEADLINE 1.A: Given a column name and value, change the value in that column
-
+            int contador = 0;
+              foreach(ColumnDefinition item in ColumnDefinitions)
+            {
+                if (item.Name.Equals(columnName))
+                {
+                    Values[contador]=value;
+                    return;
+                }
+                contador++;
+            }
             
         }
 
         public string GetValue(string columnName)
         {
             //TODO DEADLINE 1.A: Given a column name, return the value in that column
-
+            int contador = 0;
+              foreach(ColumnDefinition item in ColumnDefinitions)
+            {
+                if (item.Name.Equals(columnName))
+                {
+                   return Values[contador];
+                }
+                contador++;
+            }
             
             return null;
             
@@ -42,7 +65,15 @@ namespace DbManager
             //for this row. Check Condition.IsTrue method
             
 
-            
+            int contador = 0;
+                foreach(ColumnDefinition item in ColumnDefinitions)
+                {
+                    if (item.Name.Equals(condition.ColumnName))
+                    {
+                    return condition.IsTrue(Values[contador],item.Type);
+                    }
+                    contador++;
+                }
             return false;
             
         }
