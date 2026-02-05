@@ -69,5 +69,34 @@ namespace OurTests
            
           
         }
-    }
+
+        [Fact]
+        public void TestIsTrue()
+        {
+          List<ColumnDefinition> columnDefinitions = new List<ColumnDefinition>();
+        List<string> values = new List<string>();
+        Condition condicion1 = new Condition("Rickinillo",">","Jerry");
+        Condition condicion2 = new Condition("Beth","<","Jerry");
+        Condition condicion3 = new Condition("Summer","=","PersonaPajaro");
+        Condition condicionNada = new Condition("Inexistente","=","Cualquiera");
+
+        ColumnDefinition columnaPrueba1 = new ColumnDefinition(ColumnDefinition.DataType.String,"Rickinillo");
+            columnDefinitions.Add(columnaPrueba1);
+            values.Add("Morty");
+            ColumnDefinition columnaPrueba2 = new ColumnDefinition(ColumnDefinition.DataType.String,"Beth");
+            columnDefinitions.Add(columnaPrueba2);
+            values.Add("Jerry");
+            ColumnDefinition columnaPrueba3 = new ColumnDefinition(ColumnDefinition.DataType.String,"Summer");
+            columnDefinitions.Add(columnaPrueba3);
+            values.Add("PersonaPajaro");
+
+            Row fila = new Row(columnDefinitions,values);
+
+            Assert.True(fila.IsTrue(condicion1));
+            Assert.False(fila.IsTrue(condicion2));
+            Assert.True(fila.IsTrue(condicion3));
+            Assert.False(fila.IsTrue(condicionNada));
+
+        }
+}
 }
