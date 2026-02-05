@@ -37,6 +37,8 @@ namespace OurTests
             Assert.Equal("PersonaPajaro", fila.GetValue("Summer"));
             Assert.NotEqual("Jeremy", fila.GetValue("Beth")); 
             Assert.Null(fila.GetValue("RickBot"));
+            Assert.Null(fila.GetValue("NoSe"));
+            Assert.Null(fila.GetValue(null));
         }
 
         [Fact]
@@ -59,12 +61,15 @@ namespace OurTests
             fila.SetValue("Rickinillo","Morty Malvado");
             fila.SetValue("Beth","Cirujana");
             fila.SetValue("Summer","Meesecks");
+            fila.SetValue("NoSe", "NiIdea");
+            fila.SetValue(null, "NiIdea");
             
             Assert.NotNull(fila);
             Assert.NotNull(fila.Values);
             Assert.Equal("Morty Malvado", fila.GetValue("Rickinillo")); 
             Assert.NotEqual("Presidente", fila.GetValue("Beth"));
             Assert.Equal("Meesecks", fila.GetValue("Summer"));
+            
 
            
           
@@ -96,7 +101,24 @@ namespace OurTests
             Assert.False(fila.IsTrue(condicion2));
             Assert.True(fila.IsTrue(condicion3));
             Assert.False(fila.IsTrue(condicionNada));
+            
+        }
 
+        [Fact]
+        public void TestConstructor()
+        {
+            List<ColumnDefinition> columnDefinitions = new List<ColumnDefinition>();
+            List<string> values = new List<string>();
+
+            ColumnDefinition columnaPrueba1 = new ColumnDefinition(ColumnDefinition.DataType.String, "Rickinillo");
+            columnDefinitions.Add(columnaPrueba1);
+            values.Add("Morty");
+            values.Add("Extra");
+
+            Row filaInvalida = new Row(columnDefinitions, values);
+
+            Assert.NotNull(filaInvalida);
+            Assert.Null(filaInvalida.Values);
         }
 }
 }
