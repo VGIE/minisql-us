@@ -63,6 +63,7 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Given a condition (column name, operator and literal value, return whether it is true or not
             //for this row. Check Condition.IsTrue method
+            
 
             int contador = 0;
                 foreach(ColumnDefinition item in ColumnDefinitions)
