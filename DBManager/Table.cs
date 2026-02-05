@@ -109,44 +109,46 @@ namespace DbManager
             //"['Name']" <- one column, no rows
 
             
-            if (ColumnDefinitions != null && ColumnDefinitions.Count > 0)
-            {
-                String result = "[";
-                ColumnDefinition last = ColumnDefinitions[ColumnDefinitions.Count - 1];
-                List<String> ColumnNames = new List<String>();
-                foreach (ColumnDefinition c in ColumnDefinitions)
-                {
-                    ColumnNames.Add(c.Name);
-                    result += "'" + c.Name + "'";
-                    if (last != c)
-                    {
-                        result = result + ",";
-                    }
+           if (ColumnDefinitions != null && ColumnDefinitions.Count > 0)
+    {
+        System.Text.StringBuilder result = new System.Text.StringBuilder("[");
+        ColumnDefinition last = ColumnDefinitions[ColumnDefinitions.Count - 1];
 
-                }
-                result += "]";
-                if (Rows != null)
+        for (int i = 0; i < ColumnDefinitions.Count; i++)
+        {
+            ColumnDefinition c = ColumnDefinitions[i];
+            result.Append("'").Append(c.Name).Append("'");
+            if (c != last)
+            {
+                result.Append(",");
+            }
+        }
+
+        result.Append("]");
+
+        if (Rows != null)
+        {
+            foreach (Row row in Rows)
+            {
+                result.Append("{");
+                for (int i = 0; i < row.Values.Count; i++)
                 {
-                    foreach (Row row in Rows)
+                    result.Append("'").Append(row.Values[i]).Append("'");
+                    if (i < row.Values.Count - 1)
                     {
-                        result += "{";
-                        foreach (String name in ColumnNames)
-                        {
-                            result += "'" + row.GetValue(name) + "'";
-                            if (!name.Equals(last.Name))
-                            {
-                                result += ",";
-                            }
-                        }
-                        result += "}";
+                        result.Append(",");
                     }
                 }
-                    return result;
+                result.Append("}");
             }
-            else
-            {
-                return "";
-            }
+        }
+
+        return result.ToString();
+    }
+    else
+    {
+        return "";
+    }
         }
 
         public void DeleteIthRow(int row)
