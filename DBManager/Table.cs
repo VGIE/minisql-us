@@ -154,20 +154,46 @@ namespace DbManager
         public void DeleteIthRow(int row)
         {
             //TODO DEADLINE 1.A: Delete the i-th row. If there is no i-th row, do nothing
-            
+            if (!(row >= Rows.Count || row < 0))
+            {
+                Row toDelete = Rows[row];
+                if (toDelete != null)
+                {
+                    Rows.RemoveAt(row);
+                }
+            }
         }
 
         private List<int> RowIndicesWhereConditionIsTrue(Condition condition)
         {
             //TODO DEADLINE 1.A: Returns the indices of all the rows where the condition is true. Check Row.IsTrue()
-            
-            return null;
+
+            List<int> result = new List<int>();
+
+            if (Rows != null)
+            {
+                for (int i = 0; i < Rows.Count; i++)
+                {
+                    if (Rows[i].IsTrue(condition))
+                    {
+                        result.Add(i);
+                    }
+                }
+            }
+            return result;
             
         }
 
         public void DeleteWhere(Condition condition)
         {
             //TODO DEADLINE 1.A: Delete all rows where the condition is true. Check RowIndicesWhereConditionIsTrue()
+            List<int> toDelete = this.RowIndicesWhereConditionIsTrue(condition);
+            toDelete.Sort();
+            int num = toDelete.Count-1;
+            for (int i = num; i>=0; i--)
+            {
+                Rows.RemoveAt(toDelete[i]);
+            }
             
         }
 
