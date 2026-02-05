@@ -7,7 +7,7 @@ namespace OurTests
         //TODO DEADLINE 1A : Create your own tests for Table
         
         [Fact]
-        public void toString()
+        public void toStringTest()
         {
             //Valid examples:
             //"['Name']{'Adolfo'}{'Jacinto'}" <- one column, two rows
