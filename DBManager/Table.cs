@@ -111,39 +111,36 @@ namespace DbManager
             
            if (ColumnDefinitions != null && ColumnDefinitions.Count > 0)
     {
-        System.Text.StringBuilder result = new System.Text.StringBuilder("[");
+        string result = "[";
         ColumnDefinition last = ColumnDefinitions[ColumnDefinitions.Count - 1];
 
         for (int i = 0; i < ColumnDefinitions.Count; i++)
         {
             ColumnDefinition c = ColumnDefinitions[i];
-            result.Append("'").Append(c.Name).Append("'");
+            result=result + "'" + c.Name + "'";
             if (c != last)
             {
-                result.Append(",");
+                result=result + ",";
             }
         }
-
-        result.Append("]");
-
+        result=result + "]";
         if (Rows != null)
         {
             foreach (Row row in Rows)
             {
-                result.Append("{");
+                result=result + "{";
                 for (int i = 0; i < row.Values.Count; i++)
                 {
-                    result.Append("'").Append(row.Values[i]).Append("'");
+                    result=result + "'" + row.Values[i] + "'";
                     if (i < row.Values.Count - 1)
                     {
-                        result.Append(",");
+                        result=result + ",";
                     }
                 }
-                result.Append("}");
+                result=result + "}";
             }
         }
-
-        return result.ToString();
+        return result;
     }
     else
     {
