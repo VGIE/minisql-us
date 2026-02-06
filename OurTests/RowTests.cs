@@ -69,9 +69,6 @@ namespace OurTests
             Assert.Equal("Morty Malvado", fila.GetValue("Rickinillo")); 
             Assert.NotEqual("Presidente", fila.GetValue("Beth"));
             Assert.Equal("Meesecks", fila.GetValue("Summer"));
-            
-
-           
           
         }
 
