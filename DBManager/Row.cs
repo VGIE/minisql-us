@@ -17,7 +17,7 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Initialize member variables
 
-            if(columnDefinitions.Count == values.Count)
+            if(columnDefinitions != null && values!= null && columnDefinitions.Count == values.Count)
             {
               this.ColumnDefinitions=columnDefinitions;
               this.Values=values;

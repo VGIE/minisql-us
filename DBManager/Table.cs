@@ -118,7 +118,7 @@ namespace DbManager
         {
             ColumnDefinition c = ColumnDefinitions[i];
             result.Append("'").Append(c.Name).Append("'");
-            if (c != last)
+            if (i < ColumnDefinitions.Count - 1)
             {
                 result.Append(",");
             }
