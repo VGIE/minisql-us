@@ -12,6 +12,10 @@ namespace DbManager
         public string Operator { get; private set; }
         public string LiteralValue { get; private set; }
 
+        private string mayorQue = ">";
+        private string menorQue = "<";  
+        private string igualQue = "=";
+
         public Condition(string column, string op, string literalValue)
         {
             //TODO DEADLINE 1A: Initialize member variables
@@ -53,13 +57,13 @@ namespace DbManager
                 resultado = valor.CompareTo(valor2);
 
             }
-            if (Operator == ">" && resultado > 0)
+            if (Operator == mayorQue && resultado > 0)
             {
                 return true;
-            }else if (Operator == "=" && resultado == 0)
+            }else if (Operator == igualQue && resultado == 0)
             {
                 return true;
-            }else if((Operator == "<" && resultado < 0))
+            }else if((Operator == menorQue && resultado < 0))
             {
                 return true;
             }
