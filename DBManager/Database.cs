@@ -51,8 +51,29 @@ namespace DbManager
             //return false and set LastErrorMessage with the appropriate error (Check Constants.cs)
             //Do the same if no column is provided
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
-            
-            return false;
+            if (tableName != null && !(tableName.Equals("")))
+            {
+                foreach (Table t in Tables)
+                {
+                    if (t.Name.Equals(tableName))
+                    {
+                        LastErrorMessage = Constants.TableAlreadyExistsError;
+                        return false;
+                    }
+                }
+
+                if (ColumnDefinition == null || ColumnDefinition.Count <= 0)
+                {
+                    LastErrorMessage = Constants.DatabaseCreatedWithoutColumnsError;
+                    return false;
+                }
+
+                Table newT = new Table(tableName, ColumnDefinition);
+                Tables.Add(newT);
+                LastErrorMessage = Constants.CreateTableSuccess;
+                return true;
+            }
+            else { return false; }
             
         }
 
@@ -60,7 +81,19 @@ namespace DbManager
         {
             //DEADLINE 1.B: Delete the table with the given name. If the table doesn't exist, return false and set LastErrorMessage
             //If everything goes ok, return true and set LastErrorMessage with the appropriate success message (Check Constants.cs)
-            
+            if (tableName != null)
+            {
+                foreach (Table t in Tables)
+                {
+                    if (t.Name.Equals(tableName))
+                    {
+                        Tables.Remove(t);
+                        LastErrorMessage = Constants.DropTableSuccess;
+                        return true;
+                    }
+                }
+            }
+            LastErrorMessage = Constants.TableDoesNotExistError;
             return false;
         }
 
