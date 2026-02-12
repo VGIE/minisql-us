@@ -6,13 +6,32 @@ namespace OurTests
     public class UnitTest1
     {
         //TODO DEADLINE 1B : Create your own tests for Database
-        /*
+        
         [Fact]
-        public void Test1()
+        public void addTableANDSearchByName()
         {
+            Database db = new Database("dbTest", "1234");
 
+            List<ColumnDefinition> cd = new List<ColumnDefinition>()
+            {
+                new ColumnDefinition(ColumnDefinition.DataType.String, "name"),
+                new ColumnDefinition(ColumnDefinition.DataType.Int, "age"),
+                new ColumnDefinition(ColumnDefinition.DataType.String, "city")
+            };
+            Table t = new Table("HOLA", cd);
+            
+            //addTable
+            Assert.True(db.AddTable(new Table("testTable", cd)));
+            Assert.True(db.AddTable(t));
+            Assert.False(db.AddTable(null));
+
+            //tableByName
+            Assert.Null(db.TableByName("wowo"));
+            Assert.Equal(t, db.TableByName("HOLA"));
         }
-        */
+
+
+        
         [Fact]
         public void createOrDropTableTest()
         {

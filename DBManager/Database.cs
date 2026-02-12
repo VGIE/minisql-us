@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,21 +27,33 @@ namespace DbManager
         public Database(string adminUsername, string adminPassword)
         {
             //DEADLINE 1.B: Initalize the member variables
+            m_username = adminUsername;
             
         }
 
         public bool AddTable(Table table)
         {
             //DEADLINE 1.B: Add a new table to the database
-            
-            return false;
+            if (table != null)
+            {
+                Tables.Add(table);
+                return true;
+            }
+            else {  return false; }
             
         }
 
         public Table TableByName(string tableName)
         {
             //DEADLINE 1.B: Find and return the table with the given name
-            
+
+            foreach (Table t in Tables)
+            {
+                if (t.Name.Equals(tableName))
+                {
+                    return t;
+                }
+            }
             return null;
             
         }
