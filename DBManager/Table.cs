@@ -2,6 +2,7 @@ using DbManager.Parser;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Security.Cryptography;
 
 namespace DbManager
 {
@@ -199,15 +200,70 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Return a new table (with name 'Result') that contains the result of the select. The condition
             //may be null (if no condition, all rows should be returned). This is the most difficult method in this class
-            
-            return null;
-            
+
+            if(columnNames== null)
+            {
+                return null;
+            }
+
+            List<ColumnDefinition> columns = new List<ColumnDefinition>();
+            foreach (String i in columnNames)
+            {
+                foreach (ColumnDefinition c in ColumnDefinitions)
+                {
+                    if (c.Name == i)
+                    {
+                        columns.Add(c);
+                        break;
+                    }
+                }
+            }
+            Table Result = new Table("Result", columns);
+
+
+            if (condition != null)
+            {
+                List<int> resultRows = new List<int>();
+                resultRows = RowIndicesWhereConditionIsTrue(condition);
+                Row row;
+                foreach (int j in resultRows)
+                {
+                    List<String> values = new List<String>();
+                    row = Rows[j];
+                    foreach (ColumnDefinition c in columns)
+                    {
+                        values.Add(row.GetValue(c.Name));
+                    }
+                    Result.AddRow(new Row(columns, values));
+                }
+
+            }
+            else
+            {
+                foreach (Row r in Rows)
+                {
+                    List<String> values = new List<String>();
+                    foreach (ColumnDefinition c in columns)
+                    {
+                        values.Add(r.GetValue(c.Name));
+                    }
+                    Result.AddRow(new Row(columns, values));
+                }
+            }
+            return Result;
+
         }
 
         public bool Insert(List<string> values)
         {
             //TODO DEADLINE 1.A: Insert a new row with the values given. If the number of values is not correct, return false. True otherwise
-            
+
+            if (values!= null && NumColumns() == values.Count)
+            {
+                Row inserting = new Row(ColumnDefinitions, values);
+                this.AddRow(inserting);
+                return true;
+            }
             return false;
             
         }
@@ -216,9 +272,33 @@ namespace DbManager
         {
             //TODO DEADLINE 1.A: Update all the rows where the condition is true using all the SetValues (ColumnName-Value). If condition is null,
             //return false, otherwise return true
-            
+
+            List<String> columnas = new List<String>();
+
+            for (int i=0; i<setValues.Count; i++)
+            {
+                columnas.Add(setValues[i].ColumnName);
+            }
+
+            if (condition != null)
+            {
+                List<int> resultRows = new List<int>();
+                resultRows = RowIndicesWhereConditionIsTrue(condition);
+                foreach (int i in resultRows)
+                {
+                     for(int j=0; j<columnas.Count; j++)
+                    {
+                        Rows[i].SetValue(columnas[j], setValues[j].Value);
+                    }                   
+                    
+                }
+                return true;
+
+            }
+
             return false;
-            
+
+
         }
 
 
