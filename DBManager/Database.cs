@@ -134,9 +134,27 @@ namespace DbManager
             //DEADLINE 1.B: Delete all the rows where the condition is true. 
             //If the table or the column in the condition don't exist, return null and set LastErrorMessage (Check Constants.cs)
             //If everything goes ok, return true
-            
-            return false;
-            
+            Table tabla = TableByName(tableName);
+
+            if(tabla == null)
+            {
+                 LastErrorMessage = Constants.TableDoesNotExistError;
+                 return false;
+                }
+                if(columnCondition != null)
+            {
+                
+                ColumnDefinition columna = tabla.ColumnByName(columnCondition.ColumnName);
+                if(columna == null)
+                {
+                    LastErrorMessage = Constants.ColumnDoesNotExistError;
+                    return false;
+                }
+            }
+
+                     tabla.DeleteWhere(columnCondition);
+                     LastErrorMessage = Constants.DeleteSuccess;
+                     return true;
         }
 
         public bool Update(string tableName, List<SetValue> columnNames, Condition columnCondition)

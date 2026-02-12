@@ -66,5 +66,35 @@ namespace OurTests
             Assert.True(db.DropTable("testTable"));
             Assert.Equal(Constants.DropTableSuccess, db.LastErrorMessage);
         }
+
+        [Fact]
+        public void deleteWhereTest()
+        {
+            Database db = Database.CreateTestDatabase();
+            string tableName = Table.TestTableName;
+
+            Condition condicion1 = new Condition("Age", ">", "10"); 
+            bool resultado1 = db.DeleteWhere("Rickinillos", condicion1);
+            Assert.False(resultado1);
+            Assert.Equal(Constants.TableDoesNotExistError, db.LastErrorMessage);
+
+            Condition condicion2 = new Condition("Queso Rellenito", "=", "10"); 
+            bool resultado2 = db.DeleteWhere(tableName, condicion2);
+            Assert.False(resultado2);
+            Assert.Equal(Constants.ColumnDoesNotExistError, db.LastErrorMessage);
+
+            Condition condicion3 = new Condition("Age", ">", "50");
+            bool resultado3 = db.DeleteWhere(tableName, condicion3);
+            Assert.True(resultado3);
+            Assert.Equal(Constants.DeleteSuccess, db.LastErrorMessage);
+
+            Table tabla = db.TableByName(tableName);
+            String nombre = tabla.GetRow(0).GetValue(Table.TestColumn1Name);
+            Assert.Equal("Rodolfo", nombre); Assert.Equal(1, tabla.NumRows());
+          
     }
+    
+
+    
+}
 }
