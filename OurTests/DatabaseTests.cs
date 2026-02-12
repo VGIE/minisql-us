@@ -91,6 +91,12 @@ namespace OurTests
             Table tabla = db.TableByName(tableName);
             String nombre = tabla.GetRow(0).GetValue(Table.TestColumn1Name);
             Assert.Equal("Rodolfo", nombre); Assert.Equal(1, tabla.NumRows());
+
+            Condition condicion4 = new Condition("Age", ">", "100");
+            bool resultado4 = db.DeleteWhere(tableName, condicion4);
+            Assert.True(resultado4);
+            Assert.Equal(Constants.DeleteSuccess, db.LastErrorMessage);
+            Assert.Equal(1, tabla.NumRows());
           
     }
     
