@@ -1,4 +1,7 @@
 using DbManager;
+using DbManager.Parser;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Xml.Linq;
 
@@ -14,18 +17,17 @@ namespace OurTests
             List<ColumnDefinition> columns = new List<ColumnDefinition>();
             ColumnDefinition c = new ColumnDefinition(ColumnDefinition.DataType.String, "Name");
             ColumnDefinition c2 = new ColumnDefinition(ColumnDefinition.DataType.String, "Surname");
-            ColumnDefinition c3 = new ColumnDefinition(ColumnDefinition.DataType.Int, "Age");
             columns.Add(c);
             columns.Add(c2);
-            columns.Add(c3);
+            
             Table table = (new Table("test", columns));
             List<String> values = new List<string>()
             {
-                "Luis","Rodriguez", "33"
+                "Luis","Rodriguez"
             };
             List<String> values2 = new List<string>()
             {
-                "Mikel", "Ortiz", "22"
+                "Mikel", "Ortiz"
             };
 
             Row r = new Row(columns, values);
@@ -41,23 +43,46 @@ namespace OurTests
 
             Assert.Equal(c, table.GetColumn(0));
             Assert.Equal(c2, table.GetColumn(1));
-            Assert.Equal(c3, table.GetColumn(2));
             Assert.Null(table.GetColumn(5));
             Assert.Null(table.GetColumn(-1));
-            Assert.Equal(3, table.NumColumns());
+            Assert.Equal(2, table.NumColumns());
 
             Assert.Equal(c, table.ColumnByName("Name"));
             Assert.Equal(c2, table.ColumnByName("Surname"));
-            Assert.Equal(c3, table.ColumnByName("Age"));
             Assert.Null(table.ColumnByName("Nombre"));
             Assert.Null(table.ColumnByName(null));
 
             Assert.Equal(0, table.ColumnIndexByName("Name"));
             Assert.Equal(1, table.ColumnIndexByName("Surname"));
-            Assert.Equal(2, table.ColumnIndexByName("Age"));
             Assert.Equal(-1, table.ColumnIndexByName("Nombre"));
             Assert.Equal(-1, table.ColumnIndexByName(null));
+        }
 
+        [Fact]
+        public void testIssue42()
+        {
+            List<ColumnDefinition> columns = new List<ColumnDefinition>();
+            ColumnDefinition c = new ColumnDefinition(ColumnDefinition.DataType.String, "Name");
+            ColumnDefinition c2 = new ColumnDefinition(ColumnDefinition.DataType.String, "Surname");
+            ColumnDefinition c3 = new ColumnDefinition(ColumnDefinition.DataType.Int, "Age");
+            columns.Add(c);
+            columns.Add(c2);
+            columns.Add(c3);
+
+            Table table = (new Table("test", columns));
+            List<String> values = new List<string>()
+            {
+                "Luis","Rodriguez", "22"
+            };
+            List<String> values2 = new List<string>()
+            {
+                "Mikel", "Ortiz", "35"
+            };
+
+            Row r = new Row(columns, values);
+            Row r2 = new Row(columns, values2);
+            table.AddRow(r);
+            table.AddRow(r2);
 
 
             Condition condicionTest = new Condition("Name", "=", "Luis");
@@ -65,35 +90,69 @@ namespace OurTests
             Table table2 = (new Table("test", columns));
             Row rs = new Row(columns, values);
             table2.AddRow(rs);
-            List<string> nombresc = new List<string>();
-            for(int i=0; i<columns.Count; i++)
-            {
-                nombresc.Add(columns[i].Name);
-            }
-            Assert.Equal(table2, table.Select(nombresc, condicionTest));
-            Assert.Equal(table2, table.Select(nombresc, condicionTest2));
+            List<string> nombresc = new List<string> { c.Name, c2.Name, c3.Name };
+
+            Assert.Equal(table2.ToString(), table.Select(nombresc, condicionTest).ToString());
+            Assert.Equal(table2.ToString(), table.Select(nombresc, condicionTest2).ToString());
 
             Condition condicionTest3 = new Condition("Age", "<", "30");
             Table table3 = (new Table("test", columns));
-            Row rs2 = new Row(columns, values2);
-            table2.AddRow(rs2);
-            Assert.Equal(table3, table.Select(nombresc, condicionTest3));
+            table3.AddRow(rs);
+            Assert.Equal(table3.ToString(), table.Select(nombresc, condicionTest3).ToString());
 
             Condition condicionTest4 = new Condition("Age", ">", "30");
             Table table4 = (new Table("test", columns));
-            Row rs3 = new Row(columns, values);
-            table2.AddRow(rs3);
-            Assert.Equal(table3, table.Select(nombresc, condicionTest4));
+            Row rs3 = new Row(columns, values2);
+            table4.AddRow(rs3);
+            Assert.Equal(table4.ToString(), table.Select(nombresc, condicionTest4).ToString());
 
             Assert.Null(table.Select(null, condicionTest4));
 
-            Assert.Equal(table, table.Select(nombresc, null));
+            Assert.Equal(table.ToString(), table.Select(nombresc, null).ToString());
 
 
+            List<ColumnDefinition> columns2 = new List<ColumnDefinition>();
+            ColumnDefinition c4 = new ColumnDefinition(ColumnDefinition.DataType.String, "Name");
+            ColumnDefinition c5 = new ColumnDefinition(ColumnDefinition.DataType.String, "Surname");
+            ColumnDefinition c6 = new ColumnDefinition(ColumnDefinition.DataType.Int, "Age");
+            columns2.Add(c4);
+            columns2.Add(c5);
+            columns2.Add(c6);
 
+            Table table5 = (new Table("test", columns2));
+           
 
+            table5.Insert(values);
+            table5.Insert(values2);
+
+            Assert.Equal(table.ToString(), table5.Select(nombresc, null).ToString());
+
+            Table table6 = (new Table("test", columns2));
+            List<String> values3 = new List<string>()
+            {
+                "Luis","Ramirez", "22"
+            };
+            List<String> values4 = new List<string>()
+            {
+                "Carlos", "Ortiz", "35"
+            };
+            table6.Insert(values3);
+            table6.Insert(values4);
+
+            Table table7 = (new Table("test", columns2));
+            table7.Insert(values);
+            table7.Insert(values2);
+
+            List<SetValue> actualizar = new List<SetValue> { new SetValue("Surname", "Ramirez")};
+            List<SetValue> actualizar2 = new List<SetValue> { new SetValue("Name", "Carlos")};
+            table7.Update(actualizar , condicionTest3);
+            table7.Update(actualizar2, condicionTest4);
+
+            Assert.Equal(table6.ToString(), table7.Select(nombresc, null).ToString());
 
         }
+
+            
 
         //TODO DEADLINE 1A : Create your own tests for Table
 
