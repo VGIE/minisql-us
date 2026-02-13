@@ -1,4 +1,5 @@
 using DbManager;
+using DbManager.Parser;
 using System.ComponentModel.DataAnnotations;
 
 namespace OurTests
@@ -99,6 +100,44 @@ namespace OurTests
             Assert.Equal(1, tabla.NumRows());
           
     }
+
+    [Fact]
+    public void updateTest()
+        {
+            Database db = Database.CreateTestDatabase();
+            string tableName = Table.TestTableName;
+
+            List<SetValue> listaCambios = new List<SetValue>();
+            SetValue cambio = new SetValue(Table.TestColumn3Name,"99");
+            listaCambios.Add(cambio);
+            
+            bool resultado1 = db.Update("Rickinillos", listaCambios, null);
+            Assert.False(resultado1);
+            Assert.Equal(Constants.TableDoesNotExistError, db.LastErrorMessage);
+
+            Condition condicion1 = new Condition("ColorPelo", "=", "Rubio");
+            bool resultado2 = db.Update(tableName, listaCambios, condicion1);
+            Assert.False(resultado2);
+            Assert.Equal(Constants.ColumnDoesNotExistError, db.LastErrorMessage);
+
+            List<SetValue> listaCambios2 = new List<SetValue>();
+            SetValue cambio2 = new SetValue("Rickinillos", "Morty");
+            listaCambios2.Add(cambio2);
+            bool resultado3 = db.Update(tableName, listaCambios2, null);
+            Assert.False(resultado3);
+            Assert.Equal(Constants.ColumnDoesNotExistError, db.LastErrorMessage);
+
+            Condition condicion2 = new Condition(Table.TestColumn1Name, "=", "Maider");
+            bool resultado4 = db.Update(tableName, listaCambios, condicion2);
+            Assert.True(resultado4);
+            Assert.Equal(Constants.UpdateSuccess, db.LastErrorMessage);
+
+            Table tabla = db.TableByName(tableName);
+            Assert.Equal("25", tabla.GetRow(0).GetValue(Table.TestColumn3Name));
+            Assert.Equal("99", tabla.GetRow(1).GetValue(Table.TestColumn3Name));
+            Assert.Equal("51", tabla.GetRow(2).GetValue(Table.TestColumn3Name));
+        
+        }
     
 
     
