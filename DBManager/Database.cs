@@ -141,6 +141,11 @@ namespace DbManager
                  LastErrorMessage = Constants.TableDoesNotExistError;
                  return false;
                 }
+                if(columnCondition == null)
+            {
+                return false;
+            }
+
                 if(columnCondition != null)
             {
                 
@@ -169,7 +174,12 @@ namespace DbManager
                 LastErrorMessage = Constants.TableDoesNotExistError;
                 return false;
             }
-            if(columnCondition != null){
+            if(columnNames == null || columnNames.Count <= 0)
+            {
+                return false;
+            }
+            if(columnCondition != null)
+            {
                 ColumnDefinition columna = tabla.ColumnByName(columnCondition.ColumnName);
                 if(columna == null)
                 {

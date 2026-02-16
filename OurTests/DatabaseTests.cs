@@ -74,6 +74,9 @@ namespace OurTests
             Database db = Database.CreateTestDatabase();
             string tableName = Table.TestTableName;
 
+            bool resultadoNull = db.DeleteWhere(tableName, null);
+            Assert.False(resultadoNull);
+
             Condition condicion1 = new Condition("Age", ">", "10"); 
             bool resultado1 = db.DeleteWhere("Rickinillos", condicion1);
             Assert.False(resultado1);
@@ -106,6 +109,12 @@ namespace OurTests
         {
             Database db = Database.CreateTestDatabase();
             string tableName = Table.TestTableName;
+
+            bool resultadoNull = db.Update(tableName, null, null);
+            Assert.False(resultadoNull);
+
+            bool resultadoVacio = db.Update(tableName, new List<SetValue>(), null);
+            Assert.False(resultadoVacio);
 
             List<SetValue> listaCambios = new List<SetValue>();
             SetValue cambio = new SetValue(Table.TestColumn3Name,"99");
