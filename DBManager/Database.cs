@@ -114,19 +114,62 @@ namespace DbManager
         {
             //DEADLINE 1.B: Insert a new row to the table. If it doesn't exist return false and set LastErrorMessage appropriately
             //If everything goes ok, set LastErrorMessage with the appropriate success message (Check Constants.cs)
-            
-            return false;
-            
+
+            Table tabla = TableByName(tableName);
+
+            if (TableByName(tableName) == null)
+            {
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return false;
+            }
+
+            if (values.Count != tabla.NumColumns())
+            {
+                LastErrorMessage = Constants.ColumnCountsDontMatch;
+                return false;
+            }
+
+            List<ColumnDefinition> cf = new List<ColumnDefinition>();
+            for (int i = 0; i < tabla.NumColumns(); i++)
+            {
+                cf.Add(tabla.GetColumn(i));
+            }
+
+            Row fila = new Row(cf, values);
+            tabla.AddRow(fila);
+
+            LastErrorMessage = Constants.InsertSuccess;
+
+            return true;
+
+
         }
+            
+        
 
         public Table Select(string tableName, List<string> columns, Condition condition)
         {
             //DEADLINE 1.B: Return the result of the select. If the table doesn't exist return null and set LastErrorMessage appropriately (Check Constants.cs)
             //If any of the requested columns doesn't exist, return null and set LastErrorMessage (Check Constants.cs)
             //If everything goes ok, return the table
-            
-            return null;
-            
+
+            Table tabla = TableByName(tableName);
+
+            if(tabla == null)
+            {
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return null;
+            }
+
+            Table TablaRes = tabla.Select(columns, condition);
+
+            if(TablaRes == null)
+            {
+                LastErrorMessage = Constants.ColumnDoesNotExistError;
+                return null;
+            }
+
+            return TablaRes;
         }
 
         public bool DeleteWhere(string tableName, Condition columnCondition)
