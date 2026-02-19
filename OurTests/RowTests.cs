@@ -112,10 +112,16 @@ namespace OurTests
             values.Add("Morty");
             values.Add("Extra");
 
-            Row filaInvalida = new Row(columnDefinitions, values);
+            Row fila = new Row(columnDefinitions, values);
 
-            Assert.NotNull(filaInvalida);
-            Assert.Null(filaInvalida.Values);
+            Assert.NotNull(fila);
+            Assert.NotNull(fila.Values);
+            Assert.Equal(2, fila.Values.Count);
+
+            Row filaNula = new Row(null, null);
+            Assert.NotNull(filaNula);
+            Assert.NotNull(filaNula.Values);
+            Assert.Empty(filaNula.Values);
         }
 }
 }
