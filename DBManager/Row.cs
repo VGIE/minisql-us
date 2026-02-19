@@ -16,12 +16,17 @@ namespace DbManager
         public Row(List<ColumnDefinition> columnDefinitions, List<string> values)
         {
             //TODO DEADLINE 1.A: Initialize member variables
+             this.Values = new List<string>();
 
-            if(columnDefinitions != null && values!= null && columnDefinitions.Count == values.Count)
+            if(columnDefinitions != null)
             {
               this.ColumnDefinitions=columnDefinitions;
-              this.Values=values;
             }
+            if(values != null)
+            {
+                this.Values=values;
+            }
+            
         }
     
             
@@ -34,6 +39,10 @@ namespace DbManager
             {
                 if (item.Name.Equals(columnName))
                 {
+                    while(Values.Count <= contador)
+                    {
+                        Values.Add(null);
+                    }
                     Values[contador]=value;
                     return;
                 }
@@ -50,7 +59,15 @@ namespace DbManager
             {
                 if (item.Name.Equals(columnName))
                 {
-                   return Values[contador];
+                  if(Values.Count > contador)
+                    {
+                        return Values[contador];
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                    
                 }
                 contador++;
             }
@@ -70,7 +87,10 @@ namespace DbManager
                 {
                     if (item.Name.Equals(condition.ColumnName))
                     {
-                    return condition.IsTrue(Values[contador],item.Type);
+                        if(contador < Values.Count)
+                        {
+                            return condition.IsTrue(Values[contador],item.Type);
+                        }
                     }
                     contador++;
                 }
