@@ -123,5 +123,37 @@ namespace OurTests
             Assert.NotNull(filaNula.Values);
             Assert.Empty(filaNula.Values);
         }
-}
+
+        [Fact]
+        public void Test10Issue()
+        {
+            List<ColumnDefinition> columns = new List<ColumnDefinition>();
+            ColumnDefinition c = new ColumnDefinition(ColumnDefinition.DataType.String, "Marca");
+            ColumnDefinition c2 = new ColumnDefinition(ColumnDefinition.DataType.String, "Modelo");
+            columns.Add(c);
+            columns.Add(c2);
+
+
+            List<String> values = new List<string>()
+            {
+                "Nike","Air Max 1: Gucci"
+            };
+            List<String> values2 = new List<string>()
+            {
+                null, "Super Star: BAPE"
+            };
+
+            Row r = new Row(columns, values);
+            Row r2 = new Row(columns, values2);
+
+            String s = "Nike:Air Max 1[SEPARATOR] Gucci";
+            Assert.Equal(s, r.AsText());
+
+            String s2 = ":Super Star[SEPARATOR] BAPE";
+            Assert.Equal(s2, r2.AsText());
+
+
+
+        }
+    }
 }

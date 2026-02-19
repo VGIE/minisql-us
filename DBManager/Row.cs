@@ -124,9 +124,22 @@ namespace DbManager
         public string AsText()
         {
             //TODO DEADLINE 1.C: Return the row as string with all values separated by the delimiter
-            
-            return null;
-            
+
+            String r = "";
+            foreach (String s in Values)
+            {
+                if (s == null) { r += "" + Delimiter; }
+                else
+                {
+                    r += Encode(s) + Delimiter;
+                }
+
+            }
+
+            r.TrimEnd(':');
+
+            return r;
+
         }
 
         public static Row Parse(List<ColumnDefinition> columns, string value)
