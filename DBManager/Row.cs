@@ -105,17 +105,20 @@ namespace DbManager
         {
             //TODO DEADLINE 1.C: Encode the delimiter in value
 
-            
-            return null;
-            
+            if (value.Equals(null)) { return value; }
+
+            return value.Replace(Delimiter, DelimiterEncoded);
+
         }
 
         private static string Decode(string value)
         {
             //TODO DEADLINE 1.C: Decode the value doing the opposite of Encode()
-            
-            return null;
-            
+
+            if (value.Equals(null)) { return value; }
+
+            return value.Replace(DelimiterEncoded, Delimiter);
+
         }
 
         public string AsText()
