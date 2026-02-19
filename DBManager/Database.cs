@@ -2,6 +2,7 @@ using DbManager.Parser;
 using DbManager.Security;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime;
@@ -117,30 +118,24 @@ namespace DbManager
 
             Table tabla = TableByName(tableName);
 
-            if (TableByName(tableName) == null)
+            if (tabla == null)
             {
                 LastErrorMessage = Constants.TableDoesNotExistError;
                 return false;
             }
 
-            if (values.Count != tabla.NumColumns())
+            
+
+            bool Insert = tabla.Insert(values);
+
+            if(Insert== false)
             {
                 LastErrorMessage = Constants.ColumnCountsDontMatch;
                 return false;
             }
 
-            List<ColumnDefinition> cf = new List<ColumnDefinition>();
-            for (int i = 0; i < tabla.NumColumns(); i++)
-            {
-                cf.Add(tabla.GetColumn(i));
-            }
-
-            Row fila = new Row(cf, values);
-            tabla.AddRow(fila);
-
             LastErrorMessage = Constants.InsertSuccess;
-
-            return true;
+            return true; ;
 
 
         }
@@ -161,6 +156,27 @@ namespace DbManager
                 return null;
             }
 
+            if(columns != null)
+            {
+                foreach(string c in columns)
+                {
+                    if (tabla.ColumnByName(c) == null)
+                    {
+                        LastErrorMessage = Constants.ColumnDoesNotExistError;
+                        return null;
+                    }
+                }
+            }
+
+            if (condition!= null)
+            {
+                if(tabla.ColumnByName(condition.ColumnName)== null)
+                {
+                    LastErrorMessage = Constants.ColumnDoesNotExistError;
+                    return null;
+                }
+            }
+
             Table TablaRes = tabla.Select(columns, condition);
 
             if(TablaRes == null)
@@ -169,6 +185,7 @@ namespace DbManager
                 return null;
             }
 
+            
             return TablaRes;
         }
 

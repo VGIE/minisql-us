@@ -147,8 +147,112 @@ namespace OurTests
             Assert.Equal("51", tabla.GetRow(2).GetValue(Table.TestColumn3Name));
         
         }
-    
 
-    
-}
+        [Fact]
+        public void InsertandSelectTests()
+        {
+            //INSERT
+
+            Database db = Database.CreateTestDatabase();
+            List<ColumnDefinition> columnas = new List<ColumnDefinition>()
+            {
+                new ColumnDefinition(ColumnDefinition.DataType.String,"Nombre"),
+                new ColumnDefinition(ColumnDefinition.DataType.Int,"Edad")
+
+            };
+
+            Table tabla = new Table("TablaTest", columnas);
+            db.AddTable(tabla);
+
+            Assert.False(db.Insert("TablaInvent",null));
+            Assert.Equal(Constants.TableDoesNotExistError, db.LastErrorMessage);
+
+            Assert.False(db.Insert("TablaTest", null));
+            Assert.Equal(Constants.ColumnCountsDontMatch, db.LastErrorMessage);
+
+            List<string> valoresIncompletos = new List<string>()
+            {
+                "Farlopo"
+            };
+
+            Assert.False(db.Insert("TablaTest",valoresIncompletos));
+            Assert.Equal(Constants.ColumnCountsDontMatch, db.LastErrorMessage);
+
+
+
+            List<string> valoresSobra = new List<string>()
+            {
+                "Charles","92","Xtra"
+            };
+
+            Assert.False(db.Insert("TablaTest",valoresSobra));
+            Assert.Equal(Constants.ColumnCountsDontMatch, db.LastErrorMessage);
+
+            List<string> valoresCorrectos = new List<string>()
+            {
+                "Tijuano","90"
+            };
+
+            Assert.True(db.Insert("TablaTest",valoresCorrectos));
+            Assert.Equal(1, tabla.NumRows());
+            Assert.Equal("Tijuano", tabla.GetRow(0).GetValue("Nombre"));
+            Assert.Equal("90", tabla.GetRow(0).GetValue("Edad"));
+            Assert.Equal(Constants.InsertSuccess, db.LastErrorMessage);
+
+            //SELECT
+
+            db.Insert("TablaTest", new List<string> { "Carlos", "22" });
+
+            //tabla no existe
+            
+            List<string> columnasString = new List<string>()
+            {
+                columnas[0].Name,
+                columnas[1].Name
+            };
+
+
+            Table resNull = db.Select("TablaInvent",columnasString , null);
+            Assert.Null(resNull);
+            Assert.Equal(Constants.TableDoesNotExistError, db.LastErrorMessage);
+
+            List<string> colMalas = new List<string>()
+            {
+                "Nombre",
+                "columnaInvent"
+            };
+
+            Table resColMal = db.Select("TablaTest", colMalas, null);
+            Assert.Null(resColMal);
+            Assert.Equal(Constants.ColumnDoesNotExistError, db.LastErrorMessage);
+
+            Condition c1 = new Condition("Edad", "=", "22");
+            Table ResCorrecto = db.Select("TablaTest", columnasString, c1);
+
+            Assert.NotNull(ResCorrecto);
+            Assert.Equal(1, ResCorrecto.NumRows());
+            Assert.Equal("Carlos", ResCorrecto.GetRow(0).GetValue("Nombre"));
+            Assert.Equal("22", ResCorrecto.GetRow(0).GetValue("Edad"));
+
+
+            Table resEntera = db.Select("TablaTest", columnasString, null);
+            Assert.NotNull(resEntera);
+            Assert.Equal(2, resEntera.NumRows());
+            Assert.Equal("Tijuano", resEntera.GetRow(0).GetValue("Nombre"));
+            Assert.Equal("Carlos", resEntera.GetRow(1).GetValue("Nombre"));
+            Assert.Equal("90", resEntera.GetRow(0).GetValue("Edad"));
+            Assert.Equal("22", resEntera.GetRow(1).GetValue("Edad"));
+
+            Condition cvacia = new Condition("Edad", "=", "100");
+            Table resVacio = db.Select("TablaTest", columnasString, cvacia);
+
+            Assert.NotNull(resVacio);
+            Assert.Equal(0, resVacio.NumRows());
+
+
+        }
+
+
+
+    }
 }
