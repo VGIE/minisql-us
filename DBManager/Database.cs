@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace DbManager
 {
@@ -216,6 +217,49 @@ namespace DbManager
         {
             //DEADLINE 1.C: Save this database to disk with the given name
             //If everything goes ok, return true, false otherwise.
+            try
+            {
+                if (databaseName != null && !databaseName.Equals(""))
+                {
+                    if (!Directory.Exists(databaseName))
+                    {
+                        Directory.CreateDirectory(databaseName);
+                    }
+
+                    if (Tables != null && Tables.Count != 0)
+                    {
+                        String toSave;
+                        List<ColumnDefinition> cd;
+                        ColumnDefinition c;
+                        Row r;
+                        foreach (Table t in Tables)
+                        {
+                            cd = new List<ColumnDefinition>();
+                            toSave = "";
+                            for (int i = 0; i < t.NumColumns(); i++)
+                            {
+                                c = t.GetColumn(i);
+                                toSave += c.AsText() + "\n";
+                            }
+
+
+                            for (int i = 0; i < t.NumRows(); i++)
+                            {
+                                r = t.GetRow(i);
+                                toSave += "\n" + r.AsText();
+                            }
+                            TextWriter writer = System.IO.File.CreateText(databaseName + "\\"+ t.Name + ".txt"); //creates a new text
+                            writer.Write(toSave);
+                            writer.Close();
+                        }
+                    }
+                    else { return false; }
+                    return true;
+                }
+            }catch(Exception e)
+            {
+                return false;
+            }
             //DEADLINE 5: Save the SecurityManager so that it can be loaded with the database in Load()
             
             return false;
