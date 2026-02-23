@@ -248,7 +248,7 @@ namespace DbManager
                                 r = t.GetRow(i);
                                 toSave += "\n" + r.AsText();
                             }
-                            TextWriter writer = System.IO.File.CreateText(databaseName + "\\"+ t.Name + ".txt"); //creates a new text
+                            TextWriter writer = System.IO.File.CreateText(databaseName + "\\"+ t.Name + ".txt"); //creates a new text file
                             writer.Write(toSave);
                             writer.Close();
                         }
@@ -270,6 +270,43 @@ namespace DbManager
         {
             //DEADLINE 1.C: Load the (previously saved) database of name databaseName
             //If everything goes ok, return the loaded database (a new instance), null otherwise.
+            try
+            {
+                if (databaseName != null && !databaseName.Equals(""))
+                {
+                    string[] files = Directory.GetFiles(databaseName, "*.txt");
+                    Database db=new Database();
+                    foreach (string file in files)
+                    {
+                        bool exists = System.IO.File.Exists(file); //checks that the file exists
+                        if (!exists) { return null; }
+                        List<ColumnDefinition> cd = new List<ColumnDefinition>();
+
+                        TextReader reader = System.IO.File.OpenText(file); //opens an existing file
+                        String line = reader.ReadLine();
+                        while (line != null && !line.Equals(""))
+                        {
+                            cd.Add(ColumnDefinition.Parse(line));
+                            line = reader.ReadLine();
+                        }
+                        Table t = new Table(file.Replace(".txt", ""), cd);
+                        line = reader.ReadLine();
+                        
+                        while (line != null && !line.Equals(""))
+                        {
+                            t.AddRow(Row.Parse(cd, line));
+                            line = reader.ReadLine();
+                        }
+                        
+                        db.AddTable(t);
+                        reader.Close();
+                    }
+                    
+                }
+            }catch (Exception e)
+            {
+                return null;
+            }
             //DEADLINE 5: When the Database object is created, set the username (create a new method if you must)
             //After loading the database, load the SecurityManager and check the password is correct. If it's not, return null. If it is return the database
             
