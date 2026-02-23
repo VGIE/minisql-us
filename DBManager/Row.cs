@@ -136,7 +136,7 @@ namespace DbManager
 
             }
 
-            r.TrimEnd(':');
+            r= r.Remove(r.Length -1);
 
             return r;
 
@@ -145,7 +145,11 @@ namespace DbManager
         public static Row Parse(List<ColumnDefinition> columns, string value)
         {
             //TODO DEADLINE 1.C: Parse a rowReturn the row as string with all values separated by the delimiter
-            
+
+            String[] valores = value.Split(':');
+
+
+
             return null;
             
         }
