@@ -69,15 +69,18 @@ namespace DbManager
             String nombreDecodificado = Decode(nombre);
 
             DataType tipoEnum;
-            if(tipo == "Int")
+            String entero = "Int";
+            String cadena = "String";   
+            String doble = "Double";
+            if(tipo == entero)
             {
                 tipoEnum = DataType.Int;
             }
-            else if(tipo == "String")
+            else if(tipo == cadena)
             {
                 tipoEnum = DataType.String;
             }
-            else if(tipo == "Double")
+            else if(tipo == doble)
             {
                 tipoEnum = DataType.Double;
             }
