@@ -152,7 +152,8 @@ namespace OurTests
             String s2 = ":Super Star[SEPARATOR] BAPE";
             Assert.Equal(s2, r2.AsText());
 
-
+            String p= r.AsText();
+            Assert.Equal(p, Row.Parse(columns, p).AsText());
 
         }
     }

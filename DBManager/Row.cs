@@ -147,10 +147,18 @@ namespace DbManager
             //TODO DEADLINE 1.C: Parse a rowReturn the row as string with all values separated by the delimiter
 
             String[] valores = value.Split(':');
+            List<String> val = new List<string>();
+            for (int i=0; i<valores.Length; i++)
+            {
+                String p;
+                p= Decode(valores[i]);
+                val.Add(p);
+            }
+
+            Row r = new Row(columns,val);
 
 
-
-            return null;
+            return r;
             
         }
     }
