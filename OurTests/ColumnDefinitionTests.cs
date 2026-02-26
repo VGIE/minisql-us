@@ -34,6 +34,9 @@ namespace OurTests
 
             ColumnDefinition columna3 = new ColumnDefinition(ColumnDefinition.DataType.Double, "");
             Assert.Equal("->Double", columna3.AsText());
+
+            ColumnDefinition columna4 = new ColumnDefinition(ColumnDefinition.DataType.String, null);
+            Assert.Equal("->String", columna4.AsText());
         }
 
         [Fact]
