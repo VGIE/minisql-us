@@ -252,7 +252,13 @@ namespace OurTests
 
         }
 
+        [Fact]
+        public void SaveAndLoadTest()
+        {
+            Database db = Database.CreateTestDatabase();
+            db.Save("guardadoTest");
+            Assert.True(Database.AreEqual(db, Database.Load("guardadoTest", "", "")));
 
-
+        }
     }
 }
