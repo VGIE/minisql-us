@@ -14,9 +14,10 @@ namespace DbManager
             const string insertPattern = null;
             
             const string dropTablePattern = null;
-            
+
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
+            Match match = Regex.Match(miniSQLQuery, @"");
             const string createTablePattern = null;
             
             const string updateTablePattern = null;
