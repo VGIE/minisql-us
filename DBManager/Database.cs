@@ -273,43 +273,40 @@ namespace DbManager
             //If everything goes ok, return true, false otherwise.
             try
             {
-                if (databaseName != null && !databaseName.Equals(""))
+                if (databaseName == null || databaseName.Equals("")) { return false; }
+                
+                if (!Directory.Exists(databaseName))
                 {
-                    if (!Directory.Exists(databaseName))
-                    {
-                        Directory.CreateDirectory(databaseName);
-                    }
-
-                    if (Tables != null && Tables.Count != 0)
-                    {
-                        String toSave;
-                        List<ColumnDefinition> cd;
-                        ColumnDefinition c;
-                        Row r;
-                        foreach (Table t in Tables)
-                        {
-                            cd = new List<ColumnDefinition>();
-                            toSave = "";
-                            for (int i = 0; i < t.NumColumns(); i++)
-                            {
-                                c = t.GetColumn(i);
-                                toSave += c.AsText() + "\n";
-                            }
-
-
-                            for (int i = 0; i < t.NumRows(); i++)
-                            {
-                                r = t.GetRow(i);
-                                toSave += "\n" + r.AsText();
-                            }
-                            TextWriter writer = System.IO.File.CreateText(databaseName + "\\" + t.Name + ".txt"); //creates a new text file
-                            writer.Write(toSave);
-                            writer.Close();
-                        }
-                    }
-                    else { return false; }
-                    return true;
+                    Directory.CreateDirectory(databaseName);
                 }
+                
+                if (Tables != null && Tables.Count != 0)
+                {
+                    String toSave;
+                    List<ColumnDefinition> cd;
+                    ColumnDefinition c;
+                    Row r;
+                    foreach (Table t in Tables)
+                    {
+                        cd = new List<ColumnDefinition>();
+                        toSave = "";
+                        for (int i = 0; i < t.NumColumns(); i++)
+                        {
+                            c = t.GetColumn(i);
+                            toSave += c.AsText() + "\n";
+                        }
+
+                        for (int i = 0; i < t.NumRows(); i++)
+                        {
+                            r = t.GetRow(i);
+                            toSave += "\n" + r.AsText();
+                        }
+                        TextWriter writer = System.IO.File.CreateText(databaseName + "\\" + t.Name + ".txt"); //creates a new text file
+                        writer.Write(toSave);
+                        writer.Close();
+                    }
+                }
+                return true;            
             }
             catch (Exception e)
             {
@@ -331,8 +328,10 @@ namespace DbManager
                 {
                     string[] files = Directory.GetFiles(databaseName, "*.txt");
                     Database db = new Database();
+                    String fileNoExtension;
                     foreach (string file in files)
                     {
+                        fileNoExtension = System.IO.Path.GetFileNameWithoutExtension(file);
                         bool exists = System.IO.File.Exists(file); //checks that the file exists
                         if (!exists) { return null; }
                         List<ColumnDefinition> cd = new List<ColumnDefinition>();
@@ -344,7 +343,7 @@ namespace DbManager
                             cd.Add(ColumnDefinition.Parse(line));
                             line = reader.ReadLine();
                         }
-                        Table t = new Table(file.Replace(".txt", ""), cd);
+                        Table t = new Table(fileNoExtension, cd);
                         line = reader.ReadLine();
 
                         while (line != null && !line.Equals(""))
@@ -424,7 +423,7 @@ namespace DbManager
         {
             if (db1 == null || db2 == null) { return false; }
             if (db1.Tables.Count != db2.Tables.Count) { return false; }
-            for (int i = 0; i < db1.Tables.Count; i++)
+            for (int i = 0; i < db1.Tables.Count; i++) //IMPORTA EL ORDEN (para el save and load da igual, si se hace uso de este metodo comprobar ese matiz)
             {
                 Table t1 = db1.Tables[i];
                 Table t2 = db2.Tables[i];
