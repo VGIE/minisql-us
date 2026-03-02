@@ -2,12 +2,7 @@ using DbManager.Parser;
 using DbManager.Security;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Runtime;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DbManager
 {
@@ -29,7 +24,7 @@ namespace DbManager
         {
             //DEADLINE 1.B: Initalize the member variables
             m_username = adminUsername;
-            
+
         }
 
         public bool AddTable(Table table)
@@ -40,8 +35,8 @@ namespace DbManager
                 Tables.Add(table);
                 return true;
             }
-            else {  return false; }
-            
+            else { return false; }
+
         }
 
         public Table TableByName(string tableName)
@@ -56,7 +51,7 @@ namespace DbManager
                 }
             }
             return null;
-            
+
         }
 
         public bool CreateTable(string tableName, List<ColumnDefinition> ColumnDefinition)
@@ -88,7 +83,7 @@ namespace DbManager
                 return true;
             }
             else { return false; }
-            
+
         }
 
         public bool DropTable(string tableName)
@@ -124,11 +119,11 @@ namespace DbManager
                 return false;
             }
 
-            
+
 
             bool Insert = tabla.Insert(values);
 
-            if(Insert== false)
+            if (Insert == false)
             {
                 LastErrorMessage = Constants.ColumnCountsDontMatch;
                 return false;
@@ -139,8 +134,8 @@ namespace DbManager
 
 
         }
-            
-        
+
+
 
         public Table Select(string tableName, List<string> columns, Condition condition)
         {
@@ -150,15 +145,15 @@ namespace DbManager
 
             Table tabla = TableByName(tableName);
 
-            if(tabla == null)
+            if (tabla == null)
             {
                 LastErrorMessage = Constants.TableDoesNotExistError;
                 return null;
             }
 
-            if(columns != null)
+            if (columns != null)
             {
-                foreach(string c in columns)
+                foreach (string c in columns)
                 {
                     if (tabla.ColumnByName(c) == null)
                     {
@@ -168,9 +163,9 @@ namespace DbManager
                 }
             }
 
-            if (condition!= null)
+            if (condition != null)
             {
-                if(tabla.ColumnByName(condition.ColumnName)== null)
+                if (tabla.ColumnByName(condition.ColumnName) == null)
                 {
                     LastErrorMessage = Constants.ColumnDoesNotExistError;
                     return null;
@@ -179,13 +174,13 @@ namespace DbManager
 
             Table TablaRes = tabla.Select(columns, condition);
 
-            if(TablaRes == null)
+            if (TablaRes == null)
             {
                 LastErrorMessage = Constants.ColumnDoesNotExistError;
                 return null;
             }
 
-            
+
             return TablaRes;
         }
 
@@ -196,30 +191,30 @@ namespace DbManager
             //If everything goes ok, return true
             Table tabla = TableByName(tableName);
 
-            if(tabla == null)
+            if (tabla == null)
             {
-                 LastErrorMessage = Constants.TableDoesNotExistError;
-                 return false;
-                }
-                if(columnCondition == null)
+                LastErrorMessage = Constants.TableDoesNotExistError;
+                return false;
+            }
+            if (columnCondition == null)
             {
                 return false;
             }
 
-                if(columnCondition != null)
+            if (columnCondition != null)
             {
-                
+
                 ColumnDefinition columna = tabla.ColumnByName(columnCondition.ColumnName);
-                if(columna == null)
+                if (columna == null)
                 {
                     LastErrorMessage = Constants.ColumnDoesNotExistError;
                     return false;
                 }
             }
 
-                     tabla.DeleteWhere(columnCondition);
-                     LastErrorMessage = Constants.DeleteSuccess;
-                     return true;
+            tabla.DeleteWhere(columnCondition);
+            LastErrorMessage = Constants.DeleteSuccess;
+            return true;
         }
 
         public bool Update(string tableName, List<SetValue> columnNames, Condition columnCondition)
@@ -229,30 +224,30 @@ namespace DbManager
             //If everything goes ok, return true
 
             Table tabla = TableByName(tableName);
-            if(tabla == null)
+            if (tabla == null)
             {
                 LastErrorMessage = Constants.TableDoesNotExistError;
                 return false;
             }
-            if(columnNames == null || columnNames.Count <= 0)
+            if (columnNames == null || columnNames.Count <= 0)
             {
                 return false;
             }
-            if(columnCondition != null)
+            if (columnCondition != null)
             {
                 ColumnDefinition columna = tabla.ColumnByName(columnCondition.ColumnName);
-                if(columna == null)
+                if (columna == null)
                 {
                     LastErrorMessage = Constants.ColumnDoesNotExistError;
                     return false;
                 }
             }
 
-            if(columnNames != null)
+            if (columnNames != null)
             {
-                foreach(SetValue item in columnNames)
+                foreach (SetValue item in columnNames)
                 {
-                    if(tabla.ColumnByName(item.ColumnName) == null)
+                    if (tabla.ColumnByName(item.ColumnName) == null)
                     {
                         LastErrorMessage = Constants.ColumnDoesNotExistError;
                         return false;
@@ -261,34 +256,115 @@ namespace DbManager
             }
 
             bool resultado = tabla.Update(columnNames, columnCondition);
-            if(resultado == true)
+            if (resultado == true)
             {
                 LastErrorMessage = Constants.UpdateSuccess;
             }
-            return resultado; 
+            return resultado;
         }
 
-        
-        
 
-        
+
+
+
         public bool Save(string databaseName)
         {
             //DEADLINE 1.C: Save this database to disk with the given name
             //If everything goes ok, return true, false otherwise.
+            try
+            {
+                if (databaseName == null || databaseName.Equals("")) { return false; }
+                
+                if (!Directory.Exists(databaseName))
+                {
+                    Directory.CreateDirectory(databaseName);
+                }
+                
+                if (Tables != null && Tables.Count != 0)
+                {
+                    String toSave;
+                    List<ColumnDefinition> cd;
+                    ColumnDefinition c;
+                    Row r;
+                    foreach (Table t in Tables)
+                    {
+                        cd = new List<ColumnDefinition>();
+                        toSave = "";
+                        for (int i = 0; i < t.NumColumns(); i++)
+                        {
+                            c = t.GetColumn(i);
+                            toSave += c.AsText() + "\n";
+                        }
+
+                        for (int i = 0; i < t.NumRows(); i++)
+                        {
+                            r = t.GetRow(i);
+                            toSave += "\n" + r.AsText();
+                        }
+                        TextWriter writer = System.IO.File.CreateText(databaseName + "\\" + t.Name + ".txt"); //creates a new text file
+                        writer.Write(toSave);
+                        writer.Close();
+                    }
+                }
+                return true;            
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
             //DEADLINE 5: Save the SecurityManager so that it can be loaded with the database in Load()
-            
+
             return false;
-            
+
         }
 
         public static Database Load(string databaseName, string username, string password)
         {
             //DEADLINE 1.C: Load the (previously saved) database of name databaseName
             //If everything goes ok, return the loaded database (a new instance), null otherwise.
+            try
+            {
+                if (databaseName != null && !databaseName.Equals(""))
+                {
+                    string[] files = Directory.GetFiles(databaseName, "*.txt");
+                    Database db = new Database();
+                    String fileNoExtension;
+                    foreach (string file in files)
+                    {
+                        fileNoExtension = System.IO.Path.GetFileNameWithoutExtension(file);
+                        bool exists = System.IO.File.Exists(file); //checks that the file exists
+                        if (!exists) { return null; }
+                        List<ColumnDefinition> cd = new List<ColumnDefinition>();
+
+                        TextReader reader = System.IO.File.OpenText(file); //opens an existing file
+                        String line = reader.ReadLine();
+                        while (line != null && !line.Equals(""))
+                        {
+                            cd.Add(ColumnDefinition.Parse(line));
+                            line = reader.ReadLine();
+                        }
+                        Table t = new Table(fileNoExtension, cd);
+                        line = reader.ReadLine();
+
+                        while (line != null && !line.Equals(""))
+                        {
+                            t.AddRow(Row.Parse(cd, line));
+                            line = reader.ReadLine();
+                        }
+
+                        db.AddTable(t);
+                        reader.Close();
+                    }
+                    return db;
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
             //DEADLINE 5: When the Database object is created, set the username (create a new method if you must)
             //After loading the database, load the SecurityManager and check the password is correct. If it's not, return null. If it is return the database
-            
+
             return null;
         }
 
@@ -341,6 +417,35 @@ namespace DbManager
             Table table = TableByName(tableName);
 
             table.CheckForTesting(rows);
+        }
+
+        public static bool AreEqual(Database db1, Database db2)
+        {
+            if (db1 == null || db2 == null) { return false; }
+            if (db1.Tables.Count != db2.Tables.Count) { return false; }
+            for (int i = 0; i < db1.Tables.Count; i++) //IMPORTA EL ORDEN (para el save and load da igual, si se hace uso de este metodo comprobar ese matiz)
+            {
+                Table t1 = db1.Tables[i];
+                Table t2 = db2.Tables[i];
+
+                if (t1 == null || t2 == null) { return false; }
+                if (t1.NumColumns() != t2.NumColumns()) { return false; }
+                for (int j = 0; j < t1.NumColumns(); j++)
+                {
+                    if (t1.GetColumn(j).AsText() != t2.GetColumn(j).AsText())
+                    { 
+                        return false; 
+                    }
+                }
+
+                if (t1.NumRows() != t2.NumRows()) { return false; }
+                for (int z = 0; z < t1.NumRows(); z++)
+                {
+                    if (t1.GetRow(z).AsText() != t2.GetRow(z).AsText())
+                    { return false; }
+                }
+            }
+            return true;
         }
     }
 }
