@@ -9,7 +9,8 @@ namespace DbManager
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
             //TODO DEADLINE 2
-            const string selectPattern = null;
+            const string selectPattern = @"SELECT\s+(.+)\s+FROM\s+(\w+)\s+(WHERE\s+(\w+)\s*([=<>])\s*(.+))*";
+    
             
             const string insertPattern = null;
             
@@ -44,12 +45,38 @@ namespace DbManager
             //initialized with the table name, the columns, and (possibly) an instance of Condition.
             //If there is no match, it means there is a syntax error. We will return null.
 
+           Match matchSelect = Regex.Match(miniSQLQuery, selectPattern);
+
+           
+                if (matchSelect.Success)
+                {
+                    string columns = matchSelect.Groups[1].Value;
+                    string tableName = matchSelect.Groups[2].Value;
+                    string conditionColumn = matchSelect.Groups[4].Value;
+                    string conditionOperator = matchSelect.Groups[5].Value;
+                    string conditionValue = matchSelect.Groups[6].Value;
+                    List<string> columnList = CommaSeparatedNames(columns);
+                    Condition condition = null;
+                    if (!string.IsNullOrEmpty(conditionColumn))
+                    {
+                        condition = new Condition(conditionColumn, conditionOperator, conditionValue);
+                    }
+                    return new Select(tableName, columnList, condition);
+                }
+
+            return null;
+               
+        }
+
+
+
+
             //TODO DEADLINE 4
             //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
+
             
-            return null;
            
-        }
+        
 
         static List<string> CommaSeparatedNames(string text)
         {
