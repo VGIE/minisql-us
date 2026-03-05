@@ -18,7 +18,7 @@ namespace DbManager
 
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
-            const string createTablePattern = @"CREATE TABLE(\w +) \((\w +\s(?:String | Int | Double)(?:,\w +\s(?:String | Int | Double)) *)*\)";
+            const string createTablePattern = @"CREATE TABLE (\w+) \((\w+\s(?:String|Int|Double)(?:,\w+\s(?:String|Int|Double))*)?\)";
             
             const string updateTablePattern = null;
             
@@ -26,17 +26,35 @@ namespace DbManager
             Match match = Regex.Match(miniSQLQuery, createTablePattern);
             if (match.Success) //Has there been a match?
             {
+                if (match.Groups[2].Value == null)
+                {
+                    //PREGUNTAR QUÉ HACER SI LAS COLUMNAS ESTÁN NULL
+                    return null;
+                }
                 String[] cols = match.Groups[2].Value.Split(',');
                 List<ColumnDefinition> columnas = new List<ColumnDefinition>();
-                foreach(String s in cols)
+                foreach (String s in cols)
                 {
                     String[] separados= s.Split(' ');
                     String nombre = separados[0];
                     String tipo = separados[1];
-                    //ColumnDefinition rcol= new ColumnDefinition()
+                    ColumnDefinition rcol = null;
+                    if (tipo.Equals("String"))
+                    {
+                        rcol = new ColumnDefinition(ColumnDefinition.DataType.String, nombre);
+                    }
+                    if (tipo.Equals("Int"))
+                    {
+                        rcol = new ColumnDefinition(ColumnDefinition.DataType.Int, nombre);
+                    }
+                    if (tipo.Equals("Double"))
+                    {
+                        rcol = new ColumnDefinition(ColumnDefinition.DataType.Double, nombre);
+                    }
+                    columnas.Add(rcol);
 
                 }
-                //return new CreateTable(match.Groups[1].Value, );
+                return new CreateTable(match.Groups[1].Value, columnas);
             }
             else
             {
