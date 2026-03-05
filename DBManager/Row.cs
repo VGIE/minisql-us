@@ -105,32 +105,60 @@ namespace DbManager
         {
             //TODO DEADLINE 1.C: Encode the delimiter in value
 
-            
-            return null;
-            
+            if (value.Equals(null)) { return value; }
+
+            return value.Replace(Delimiter, DelimiterEncoded);
+
         }
 
         private static string Decode(string value)
         {
             //TODO DEADLINE 1.C: Decode the value doing the opposite of Encode()
-            
-            return null;
-            
+
+            if (value.Equals(null)) { return value; }
+
+            return value.Replace(DelimiterEncoded, Delimiter);
+
         }
 
         public string AsText()
         {
             //TODO DEADLINE 1.C: Return the row as string with all values separated by the delimiter
-            
-            return null;
-            
+
+            String r = "";
+            foreach (String s in Values)
+            {
+                if (s == null) { r += "" + Delimiter; }
+                else
+                {
+                    r += Encode(s) + Delimiter;
+                }
+
+            }
+
+            r= r.Remove(r.Length -1);
+
+            return r;
+
         }
 
         public static Row Parse(List<ColumnDefinition> columns, string value)
         {
             //TODO DEADLINE 1.C: Parse a rowReturn the row as string with all values separated by the delimiter
-            
-            return null;
+
+            String[] valores = value.Split(':');
+            List<String> val = new List<string>();
+            for (int i=0; i<valores.Length; i++)
+            {
+                String p;
+                p= Decode(valores[i]);
+                val.Add(p);
+            }
+
+            Row r = new Row(columns,val);
+
+
+            return r;
             
         }
     }
