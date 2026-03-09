@@ -19,7 +19,7 @@ namespace DbManager
             //And then, an execution error should be given if a CreateTable without columns is executed
             const string createTablePattern = null;
             
-            const string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+(.*)\s+WHERE\s+(\w+)\s*(=|<|>)\s*(.*)";
+            const string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+((?:\w+='[^']*')(?:,\s*\w+='[^']*')*)\s+WHERE\s+(\w+)(=|<|>)'([^']*)'";
             
             const string deletePattern = null;
             
@@ -50,7 +50,7 @@ namespace DbManager
                 string setString = matchUpdate.Groups[2].Value;
                 string condColumn = matchUpdate.Groups[3].Value;
                 string conditionOperator = matchUpdate.Groups[4].Value;
-                string conditionValue = matchUpdate.Groups[5].Value.Trim('\'');
+                string conditionValue = matchUpdate.Groups[5].Value;
 
                 List<SetValue> setValues = new List<SetValue>();
                 List<string> asignaciones = CommaSeparatedNames(setString);
@@ -61,15 +61,34 @@ namespace DbManager
                     if(partes.Length == 2)
                     {
                         string columna = partes[0].Trim();
-                        string valor = partes[1].Trim().Trim('\'');
-                        SetValue nuevo = new SetValue(columna, valor);
+                        string valorConComillas = partes[1].Trim();
+
+                        if (valorConComillas.StartsWith("'") == true && valorConComillas.EndsWith("'") == true)
+                        {
+                        //extraemos solo lo de dentro de las comillas
+                        string valorLimpio = valorConComillas.Substring(1, valorConComillas.Length - 2);
+                
+                        SetValue nuevo = new SetValue(columna, valorLimpio);
                         setValues.Add(nuevo);
+                        }
+
+                        else
+                        {
+                        //si falta alguna comilla, devolvemos null porque la sintaxis está mal
+                        return null; 
+                        }
+                    }
+                    else
+                    {
+                    //si el Split no da exactamente 2 partes, devolvemos null
+                    return null; 
                     }
                 }
-                Condition condition = new Condition(condColumn, conditionOperator, conditionValue);
-                Update consultaUpdate = new Update(tableName, setValues, condition);
+    
+            Condition condition = new Condition(condColumn, conditionOperator, conditionValue);
+            Update consultaUpdate = new Update(tableName, setValues, condition);
 
-                return consultaUpdate;
+            return consultaUpdate;
             }
 
 
