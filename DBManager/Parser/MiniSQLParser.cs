@@ -10,19 +10,19 @@ namespace DbManager
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
             //TODO DEADLINE 2
-            const string selectPattern = null;
+            const string selectPattern = null; //mikel
             
-            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s+\(((?:\s*'([^']*)'\s*,)*(?:\s*'([^']*)'\s*))\)\s*;";
+            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s+\(((?:\s*'([^']*)'\s*,)*(?:\s*'([^']*)'\s*))\)\s*"; //kaiet
             
-            const string dropTablePattern = null;
+            const string dropTablePattern = null; //fabian
             
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
-            const string createTablePattern = null;
+            const string createTablePattern = null; //fabian
             
-            const string updateTablePattern = null;
+            const string updateTablePattern = null; //julen
             
-            const string deletePattern = null;
+            const string deletePattern = null; //kaiet
             
 
             //TODO DEADLINE 4
@@ -53,7 +53,7 @@ namespace DbManager
                 toFilter = match.Groups[2].Value;
                 for(int i = 0; i < toFilter.Length; i++)
                 {
-                    if (toFilter[i].Equals("'"))
+                    if (toFilter[i]=='\'')
                     {
                         copying = !copying;
                     }
@@ -61,7 +61,7 @@ namespace DbManager
                     {
                         toSplit += toFilter[i];
                     }
-                    else if (toFilter[i].Equals(","))
+                    else if (toFilter[i] == ',')
                     {
                         toSplit += ",";
                     }
