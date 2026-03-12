@@ -110,6 +110,50 @@ namespace OurTests
 
 
         }
+        [Fact]
+        public void CreateTableTest()
+        {
+            Object obj;
+
+            obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca String,Modelo String)");
+            Assert.True(obj is CreateTable);
+            obj = MiniSQLParser.Parse("CREATE TABLE Coches ()");
+            Assert.True(obj is CreateTable);
+            obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca ,Modelo String)");
+            Assert.False(obj is CreateTable);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca String,Modelo String);");
+            Assert.False(obj is CreateTable);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("CREATE  TABLE Coches (Marca String  ,Modelo String) ");
+            Assert.False(obj is CreateTable);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("CREATE Table Coches (Marca String  ,Modelo String)");
+            Assert.False(obj is CreateTable);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("CREATE TABLE Coches (,Modelo String)");
+            Assert.False(obj is CreateTable);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca String,)");
+            Assert.False(obj is CreateTable);
+            Assert.True(obj is null);
+
+            obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca String,Modelo String,Ano Int)");
+            Assert.True(obj is CreateTable);
+            CreateTable create = (CreateTable)obj;
+
+            Assert.Equal("Coches", create.Table);
+            List<ColumnDefinition> cols = create.ColumnsParameters;
+            List<String> colsNomb = new List<String>();
+            foreach(ColumnDefinition c in cols)
+            {
+                colsNomb.Add(c.Name);
+            }
+            Assert.Equal("Marca", colsNomb[0]);
+            Assert.Equal("Modelo", colsNomb[1]);
+            Assert.Equal("Ano", colsNomb[2]);
+        }
+
 
 
     }
