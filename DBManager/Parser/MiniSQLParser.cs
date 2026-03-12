@@ -1,4 +1,5 @@
 using DbManager.Parser;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -13,16 +14,19 @@ namespace DbManager
     
             
             const string insertPattern = null;
+            const string selectPattern = null; //mikel
             
-            const string dropTablePattern = null;
+            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s+\(((?:\s*'([^']*)'\s*,)*(?:\s*'([^']*)'\s*))\)\s*"; //kaiet
+            
+            const string dropTablePattern = null; //fabian
             
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
-            const string createTablePattern = null;
+            const string createTablePattern = null; //fabian
             
-            const string updateTablePattern = null;
+            const string updateTablePattern = null; //julen
             
-            const string deletePattern = null;
+            const string deletePattern = null; //kaiet
             
 
             //TODO DEADLINE 4
@@ -37,7 +41,7 @@ namespace DbManager
             const string addUserPattern = null;
             
             const string deleteUserPattern = null;
-            
+
 
             //TODO DEADLINE 2
             //Parse query using the regular expressions above one by one. If there is a match, create an instance of the query with the parsed parameters
@@ -72,6 +76,33 @@ namespace DbManager
         }
 
 
+
+
+            Match match = Regex.Match(miniSQLQuery, insertPattern);
+            if (match.Success)
+            {
+                string toFilter, toSplit="";
+                bool copying = false;
+                toFilter = match.Groups[2].Value;
+                for(int i = 0; i < toFilter.Length; i++)
+                {
+                    if (toFilter[i]=='\'')
+                    {
+                        copying = !copying;
+                    }
+                    else if (copying)
+                    {
+                        toSplit += toFilter[i];
+                    }
+                    else if (toFilter[i] == ',')
+                    {
+                        toSplit += ",";
+                    }
+                }
+                List<string> values = new List<string>();
+                values = CommaSeparatedNames(toSplit);
+                return new Insert(match.Groups[1].Value, values);
+            }
 
 
             //TODO DEADLINE 4
