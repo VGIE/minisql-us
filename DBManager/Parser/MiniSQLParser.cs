@@ -15,7 +15,7 @@ namespace DbManager
             
            
             
-            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s+\(((?:\s*'([^']*)'\s*,)*(?:\s*'([^']*)'\s*))\)\s*"; //kaiet
+            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s+\(((?:\s*'([^']*)'\s*,)*(?:\s*'([^']*)'\s*))\)"; //kaiet
             
             const string dropTablePattern = null; //fabian
             
@@ -25,7 +25,7 @@ namespace DbManager
             
             const string updateTablePattern = null; //julen
             
-            const string deletePattern = null; //kaiet
+            const string deletePattern = @"DELETE\s+FROM\s+(\w+)\s+WHERE\s+(\w+)\s*(<|>|=)\s*'([^']*)'"; //kaiet
             
 
             //TODO DEADLINE 4
@@ -71,9 +71,13 @@ namespace DbManager
                 }
 
             Match match = Regex.Match(miniSQLQuery, insertPattern);
+            Match match;
+            
+            match = Regex.Match(miniSQLQuery, insertPattern);
             if (match.Success)
             {
-                string toFilter, toSplit = "";
+                if(match.Length != miniSQLQuery.Length) { return null; }
+                string toFilter, toSplit="";
                 bool copying = false;
                 toFilter = match.Groups[2].Value;
                 for (int i = 0; i < toFilter.Length; i++)
@@ -104,13 +108,14 @@ namespace DbManager
            
             }
 
-
-            //TODO DEADLINE 4
-            //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
-
-            
-           
-        
+            match = Regex.Match(miniSQLQuery, deletePattern);
+            if (match.Success)
+            {
+                if (match.Length != miniSQLQuery.Length) { return null; }
+                return new Delete(match.Groups[1].Value, new Condition(match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value));
+            }
+            return null;
+        }
 
         static List<string> CommaSeparatedNames(string text)
         {
