@@ -23,6 +23,28 @@ namespace DbManager
             const string updateTablePattern = null; //julen
             
             const string deletePattern = null;
+            
+
+
+            //TODO DEADLINE 4
+            const string createSecurityProfilePattern = null;
+            
+            const string dropSecurityProfilePattern = null;
+            
+            const string grantPattern = null;
+            
+            const string revokePattern = null;
+            
+            const string addUserPattern = null;
+            
+            const string deleteUserPattern = null;
+
+
+            //TODO DEADLINE 2
+            //Parse query using the regular expressions above one by one. If there is a match, create an instance of the query with the parsed parameters
+            //For example, if the query is a "SELECT ...", there should be a match with selectPattern. We would create and return an instance of Select
+            //initialized with the table name, the columns, and (possibly) an instance of Condition.
+            //If there is no match, it means there is a syntax error. We will return null.
             Match match = Regex.Match(miniSQLQuery, createTablePattern);
             if (match.Success) //Has there been a match?
             {
@@ -35,7 +57,7 @@ namespace DbManager
                 List<ColumnDefinition> columnas = new List<ColumnDefinition>();
                 foreach (String s in cols)
                 {
-                    String[] separados= s.Split(' ');
+                    String[] separados = s.Split(' ');
                     String nombre = separados[0];
                     String tipo = separados[1];
                     ColumnDefinition rcol = null;
@@ -61,28 +83,7 @@ namespace DbManager
                 Console.WriteLine("No matches found");
             }
 
-
-            //TODO DEADLINE 4
-            const string createSecurityProfilePattern = null;
-            
-            const string dropSecurityProfilePattern = null;
-            
-            const string grantPattern = null;
-            
-            const string revokePattern = null;
-            
-            const string addUserPattern = null;
-            
-            const string deleteUserPattern = null;
-
-
-            //TODO DEADLINE 2
-            //Parse query using the regular expressions above one by one. If there is a match, create an instance of the query with the parsed parameters
-            //For example, if the query is a "SELECT ...", there should be a match with selectPattern. We would create and return an instance of Select
-            //initialized with the table name, the columns, and (possibly) an instance of Condition.
-            //If there is no match, it means there is a syntax error. We will return null.
-
-            Match match = Regex.Match(miniSQLQuery, insertPattern);
+            match = Regex.Match(miniSQLQuery, insertPattern);
             if (match.Success)
             {
                 string toFilter, toSplit="";

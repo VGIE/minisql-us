@@ -152,11 +152,80 @@ namespace OurTests
 
         }
 
-            
-
-        //TODO DEADLINE 1A : Create your own tests for Table
-
         [Fact]
+        public void testIssue43()
+        {
+            List<ColumnDefinition> columns = new List<ColumnDefinition>();
+            ColumnDefinition c = new ColumnDefinition(ColumnDefinition.DataType.String, "Name");
+            ColumnDefinition c2 = new ColumnDefinition(ColumnDefinition.DataType.String, "Surname");
+            ColumnDefinition c3 = new ColumnDefinition(ColumnDefinition.DataType.Int, "Age");
+            columns.Add(c);
+            columns.Add(c2);
+            columns.Add(c3);
+
+            Table table = (new Table("test", columns));
+            List<String> values = new List<string>()
+            {
+                "Luis","Rodriguez", "22"
+            };
+            List<String> values2 = new List<string>()
+            {
+                "Mikel", "Ortiz", "35"
+            };
+
+            Row r = new Row(columns, values);
+            Row r2 = new Row(columns, values2);
+            table.AddRow(r);
+            table.AddRow(r2);
+
+
+            List<ColumnDefinition> columns2 = new List<ColumnDefinition>();
+            columns2.Add(c3);
+            columns2.Add(c);
+            columns2.Add(c2);
+            Condition condicionTest = new Condition("Name", "=", "Luis");
+            Condition condicionTest2 = new Condition("Surname", "=", "Rodriguez");
+            Table table2 = (new Table("test", columns2));
+            List<String> valuesDes = new List<string>()
+            {
+                "22","Luis","Rodriguez" 
+            };
+            Row rs = new Row(columns2, valuesDes);
+            table2.AddRow(rs);
+            List<string> nombresc = new List<string> { c3.Name, c.Name, c2.Name };
+
+            Assert.Equal(table2.ToString(), table.Select(nombresc, condicionTest).ToString());
+            Assert.Equal(table2.ToString(), table.Select(nombresc, condicionTest2).ToString());
+
+
+
+            List<ColumnDefinition> columns3 = new List<ColumnDefinition>();
+            columns3.Add(c2);
+            columns3.Add(c);
+            Table table3 = (new Table("test", columns3));
+            List<String> valuesDes2 = new List<string>()
+            {
+                "Rodriguez","Luis"
+            };
+            List<String> valuesDes3 = new List<string>()
+            {
+                "Ortiz","Mikel"
+            };
+            Row rs2 = new Row(columns3, valuesDes2);
+            Row rs3 = new Row(columns3, valuesDes3);
+            table3.AddRow(rs2);
+            table3.AddRow(rs3);
+
+            List<string> nombresc2 = new List<string> { c2.Name, c.Name };
+            Assert.Equal(table3.ToString(), table.Select(nombresc2, null).ToString());
+
+        }
+
+
+
+            //TODO DEADLINE 1A : Create your own tests for Table
+
+            [Fact]
         public void toStringTest()
         {
             //Valid examples:
