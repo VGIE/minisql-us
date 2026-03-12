@@ -10,9 +10,12 @@ namespace DbManager
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
             //TODO DEADLINE 2
-            const string selectPattern = null; //mikel
+            const string selectPattern = @"SELECT\s+(.+)\s+FROM\s+(\w+)\s*(WHERE\s+(\w+)\s*([=<>])\s*(.+))*";
+    
             
-            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s+\(((?:\s*'([^']*)'\s*,)*(?:\s*'([^']*)'\s*))\)\s*"; //kaiet
+           
+            
+            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s+\(((?:\s*'([^']*)'\s*,)*(?:\s*'([^']*)'\s*))\)"; //kaiet
             
             const string dropTablePattern = null; //fabian
             
@@ -22,7 +25,7 @@ namespace DbManager
             
             const string updateTablePattern = null; //julen
             
-            const string deletePattern = null;
+            const string deletePattern = @"DELETE\s+FROM\s+(\w+)\s+WHERE\s+(\w+)\s*(<|>|=)\s*'([^']*)'"; //kaiet
             
 
 
@@ -83,15 +86,41 @@ namespace DbManager
                 Console.WriteLine("No matches found");
             }
 
+           Match matchSelect = Regex.Match(miniSQLQuery, selectPattern);
+
+           
+                if (matchSelect.Success)
+                {
+                string columns = matchSelect.Groups[1].Value;
+                string tableName = matchSelect.Groups[2].Value;
+                List<string> columnList = CommaSeparatedNames(columns);
+                Condition condition = null;
+               
+                if (matchSelect.Groups[4].Success)
+                {
+                    string conditionColumn = matchSelect.Groups[4].Value;
+                    string conditionOperator = matchSelect.Groups[5].Value;
+                    string conditionValue = matchSelect.Groups[6].Value;
+
+                    condition = new Condition(conditionColumn, conditionOperator, conditionValue);
+                }
+
+                    return new Select(tableName, columnList, condition);
+                }
+
+            Match match = Regex.Match(miniSQLQuery, insertPattern);
+            
+            
             match = Regex.Match(miniSQLQuery, insertPattern);
             if (match.Success)
             {
+                if(match.Length != miniSQLQuery.Length) { return null; }
                 string toFilter, toSplit="";
                 bool copying = false;
                 toFilter = match.Groups[2].Value;
-                for(int i = 0; i < toFilter.Length; i++)
+                for (int i = 0; i < toFilter.Length; i++)
                 {
-                    if (toFilter[i]=='\'')
+                    if (toFilter[i] == '\'')
                     {
                         copying = !copying;
                     }
@@ -107,14 +136,23 @@ namespace DbManager
                 List<string> values = new List<string>();
                 values = CommaSeparatedNames(toSplit);
                 return new Insert(match.Groups[1].Value, values);
+
+
             }
 
-
-            //TODO DEADLINE 4
-            //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
             
-            return null;
+
+
            
+            
+
+            match = Regex.Match(miniSQLQuery, deletePattern);
+            if (match.Success)
+            {
+                if (match.Length != miniSQLQuery.Length) { return null; }
+                return new Delete(match.Groups[1].Value, new Condition(match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value));
+            }
+            return null;
         }
 
         static List<string> CommaSeparatedNames(string text)
