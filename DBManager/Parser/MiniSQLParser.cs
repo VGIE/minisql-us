@@ -50,17 +50,20 @@ namespace DbManager
            
                 if (matchSelect.Success)
                 {
-                    string columns = matchSelect.Groups[1].Value;
-                    string tableName = matchSelect.Groups[2].Value;
+                string columns = matchSelect.Groups[1].Value;
+                string tableName = matchSelect.Groups[2].Value;
+                List<string> columnList = CommaSeparatedNames(columns);
+                Condition condition = null;
+               
+                if (matchSelect.Groups[4].Success)
+                {
                     string conditionColumn = matchSelect.Groups[4].Value;
                     string conditionOperator = matchSelect.Groups[5].Value;
                     string conditionValue = matchSelect.Groups[6].Value;
-                    List<string> columnList = CommaSeparatedNames(columns);
-                    Condition condition = null;
-                    if (!string.IsNullOrEmpty(conditionColumn))
-                    {
-                        condition = new Condition(conditionColumn, conditionOperator, conditionValue);
-                    }
+
+                    condition = new Condition(conditionColumn, conditionOperator, conditionValue);
+                }
+
                     return new Select(tableName, columnList, condition);
                 }
 
