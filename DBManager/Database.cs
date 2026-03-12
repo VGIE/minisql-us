@@ -283,14 +283,14 @@ namespace DbManager
                 if (Tables != null && Tables.Count != 0)
                 {
                     String toSave;
-                    List<ColumnDefinition> cd;
+                    List<ColumnDefinition> cds;
                     ColumnDefinition c;
                     Row r;
 
                     foreach (Table t in Tables)
                     {
                         TextWriter writer = System.IO.File.CreateText(databaseName + "\\" + t.Name + ".txt"); //creates a new text file
-                        cd = new List<ColumnDefinition>();
+                        cds = new List<ColumnDefinition>();
                         for (int i = 0; i < t.NumColumns(); i++)
                         {
                             c = t.GetColumn(i);
@@ -309,7 +309,6 @@ namespace DbManager
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message + "\n" + e.StackTrace);
                 return false;
             }
             //DEADLINE 5: Save the SecurityManager so that it can be loaded with the database in Load()

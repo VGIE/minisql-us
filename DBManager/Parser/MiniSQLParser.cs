@@ -12,7 +12,7 @@ namespace DbManager
             //TODO DEADLINE 2
             const string selectPattern = null; //mikel
             
-            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s+\(((?:\s*'([^']*)'\s*,)*(?:\s*'([^']*)'\s*))\)\s*"; //kaiet
+            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s+\(((?:\s*'([^']*)'\s*,)*(?:\s*'([^']*)'\s*))\)"; //kaiet
             
             const string dropTablePattern = null; //fabian
             
@@ -22,7 +22,7 @@ namespace DbManager
             
             const string updateTablePattern = null; //julen
             
-            const string deletePattern = null; //kaiet
+            const string deletePattern = @"DELETE\s+FROM\s+(\w+)\s+WHERE\s+(\w+)\s*(<|>|=)\s*'([^']*)'"; //kaiet
             
 
             //TODO DEADLINE 4
@@ -44,10 +44,12 @@ namespace DbManager
             //For example, if the query is a "SELECT ...", there should be a match with selectPattern. We would create and return an instance of Select
             //initialized with the table name, the columns, and (possibly) an instance of Condition.
             //If there is no match, it means there is a syntax error. We will return null.
-
-            Match match = Regex.Match(miniSQLQuery, insertPattern);
+            Match match;
+            
+            match = Regex.Match(miniSQLQuery, insertPattern);
             if (match.Success)
             {
+                if(match.Length != miniSQLQuery.Length) { return null; }
                 string toFilter, toSplit="";
                 bool copying = false;
                 toFilter = match.Groups[2].Value;
@@ -71,12 +73,13 @@ namespace DbManager
                 return new Insert(match.Groups[1].Value, values);
             }
 
-
-            //TODO DEADLINE 4
-            //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
-            
+            match = Regex.Match(miniSQLQuery, deletePattern);
+            if (match.Success)
+            {
+                if (match.Length != miniSQLQuery.Length) { return null; }
+                return new Delete(match.Groups[1].Value, new Condition(match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value));
+            }
             return null;
-           
         }
 
         static List<string> CommaSeparatedNames(string text)
