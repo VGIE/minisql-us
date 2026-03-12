@@ -10,11 +10,10 @@ namespace DbManager
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
             //TODO DEADLINE 2
-            const string selectPattern = @"SELECT\s+(.+)\s+FROM\s+(\w+)\s+(WHERE\s+(\w+)\s*([=<>])\s*(.+))*";
+            const string selectPattern = @"SELECT\s+(.+)\s+FROM\s+(\w+)\s*(WHERE\s+(\w+)\s*([=<>])\s*(.+))*";
     
             
-            const string insertPattern = null;
-            const string selectPattern = null; //mikel
+           
             
             const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s+\(((?:\s*'([^']*)'\s*,)*(?:\s*'([^']*)'\s*))\)\s*"; //kaiet
             
@@ -71,22 +70,15 @@ namespace DbManager
                     return new Select(tableName, columnList, condition);
                 }
 
-            return null;
-               
-        }
-
-
-
-
             Match match = Regex.Match(miniSQLQuery, insertPattern);
             if (match.Success)
             {
-                string toFilter, toSplit="";
+                string toFilter, toSplit = "";
                 bool copying = false;
                 toFilter = match.Groups[2].Value;
-                for(int i = 0; i < toFilter.Length; i++)
+                for (int i = 0; i < toFilter.Length; i++)
                 {
-                    if (toFilter[i]=='\'')
+                    if (toFilter[i] == '\'')
                     {
                         copying = !copying;
                     }
@@ -102,6 +94,14 @@ namespace DbManager
                 List<string> values = new List<string>();
                 values = CommaSeparatedNames(toSplit);
                 return new Insert(match.Groups[1].Value, values);
+
+
+            }
+
+            return null;
+
+
+           
             }
 
 

@@ -39,6 +39,42 @@ namespace OurTests
         }
 
 
+        [Fact]
+
+        public void SelectCase()
+        {
+            Object obj;
+
+            obj = MiniSQLParser.Parse("SELECT dni FROM alumnos WHERE nombre='Charlicius'");
+            Assert.True(obj is Select);
+
+            Select select = (Select)obj;
+            Assert.Equal("alumnos", select.Table);
+            Assert.Equal(1, select.Columns.Count);
+            Assert.Equal("dni", select.Columns[0]);
+
+
+            obj = MiniSQLParser.Parse("SELECT dni,sexo,apellido FROM alumnos WHERE nombre='Charlicius'");
+            Assert.True(obj is Select);
+            obj = MiniSQLParser.Parse("SELECT dni FROM profesor");
+            Assert.True(obj is Select);
+            obj = MiniSQLParser.Parse("SELECT dni FROM profesor WHERE edad>60");
+            Assert.True(obj is Select);
+            obj = MiniSQLParser.Parse("SELECT FROM profesor WHERE edad>60");
+            Assert.False(obj is Select);
+            Assert.Null(obj);
+            obj = MiniSQLParser.Parse("Select nombre where dni = '123456'");
+            Assert.False(obj is Select);
+            Assert.Null(obj);
+            obj = MiniSQLParser.Parse("SELECT nombre WHERE dni = '123456'");
+            Assert.False(obj is Select);
+            Assert.Null(obj);
+
+
+
+        }
+
+
     }
 
 }
