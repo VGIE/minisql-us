@@ -53,6 +53,7 @@ namespace DbManager
            
                 if (matchSelect.Success)
                 {
+                if (matchSelect.Length != miniSQLQuery.Length) { return null; }
                 string columns = matchSelect.Groups[1].Value;
                 string tableName = matchSelect.Groups[2].Value;
                 List<string> columnList = CommaSeparatedNames(columns);
