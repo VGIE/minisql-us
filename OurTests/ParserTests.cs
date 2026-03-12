@@ -76,6 +76,46 @@ namespace OurTests
             Assert.Equal("Maik", delete.Where.LiteralValue);
         }
 
+
+        [Fact]
+        public void UpdateTest()
+        {
+            Object obj;
+
+            obj = MiniSQLParser.Parse("UPDATE Personas Edad='30' WHERE Nombre='Morty'");
+            Assert.False(obj is Update);
+
+            obj = MiniSQLParser.Parse("UPDATE Personas SET Edad=30 WHERE Nombre=Morty");
+            Assert.False(obj is Update);
+
+            obj = MiniSQLParser.Parse("UPDATE Personas SET Edad='30' WHERE Nombre = 'Morty'");
+            Assert.False(obj is Update);
+
+            obj = MiniSQLParser.Parse("UPDATE Tabla SET Columna='Valor' WHERE Id='1'");
+            Assert.True(obj is Update);
+
+            obj = MiniSQLParser.Parse("UPDATE Personas SET Edad='30', Pelo='Rubio' WHERE Nombre='Morty'");
+            Assert.True(obj is Update);
+            
+            Update updateObj = (Update)obj;
+
+            Assert.Equal("Personas", updateObj.Table);
+
+            List<SetValue> columnasActualizar = updateObj.Columns;
+            Assert.Equal(2, columnasActualizar.Count);
+            
+            Assert.Equal("Edad", columnasActualizar[0].ColumnName);
+            Assert.Equal("30", columnasActualizar[0].Value);
+
+            Assert.Equal("Pelo", columnasActualizar[1].ColumnName);
+            Assert.Equal("Rubio", columnasActualizar[1].Value);
+
+            Condition condicionWhere = updateObj.Where;
+            Assert.Equal("Nombre", condicionWhere.ColumnName);
+            Assert.Equal("=", condicionWhere.Operator);
+            Assert.Equal("Morty", condicionWhere.LiteralValue);
+        }
+
     }
 
 }

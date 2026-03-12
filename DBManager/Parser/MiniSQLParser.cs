@@ -47,9 +47,12 @@ namespace DbManager
             Match match;
             
             match = Regex.Match(miniSQLQuery, insertPattern);
-            if (match.Success)
+            if (match.Success == true)
             {
-                if(match.Length != miniSQLQuery.Length) { return null; }
+                if(match.Length != miniSQLQuery.Length) 
+                { 
+                    return null; 
+                }
                 string toFilter, toSplit="";
                 bool copying = false;
                 toFilter = match.Groups[2].Value;
@@ -59,7 +62,7 @@ namespace DbManager
                     {
                         copying = !copying;
                     }
-                    else if (copying)
+                    else if (copying == true)
                     {
                         toSplit += toFilter[i];
                     }
@@ -74,14 +77,73 @@ namespace DbManager
             }
 
             match = Regex.Match(miniSQLQuery, deletePattern);
-            if (match.Success)
+            if (match.Success == true)
             {
-                if (match.Length != miniSQLQuery.Length) { return null; }
+                if (match.Length != miniSQLQuery.Length) 
+                { 
+                    return null; 
+                }
                 return new Delete(match.Groups[1].Value, new Condition(match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value));
             }
+
+            // --- TU BLOQUE UPDATE INTEGRADO ---
+            match = Regex.Match(miniSQLQuery, updateTablePattern);
+            if (match.Success == true)
+            {
+                if (match.Length != miniSQLQuery.Length)
+                {
+                    return null;
+                }
+
+                string tableName = match.Groups[1].Value;
+                string setString = match.Groups[2].Value;
+                string condColumn = match.Groups[3].Value;
+                string conditionOperator = match.Groups[4].Value;
+                string conditionValue = match.Groups[5].Value;
+
+                List<SetValue> setValues = new List<SetValue>();
+                List<string> asignaciones = CommaSeparatedNames(setString);
+
+                foreach(string asignacion in asignaciones)
+                {
+                    string[] partes = asignacion.Split("=");
+                    
+                    if(partes.Length == 2)
+                    {
+                        string columna = partes[0].Trim();
+                        string valorConComillas = partes[1].Trim();
+
+                        if (valorConComillas.StartsWith("'") == true && valorConComillas.EndsWith("'") == true)
+                        {
+                            // extraemos solo lo de dentro de las comillas
+                            string valorLimpio = valorConComillas.Substring(1, valorConComillas.Length - 2);
+                            
+                            SetValue nuevo = new SetValue(columna, valorLimpio);
+                            setValues.Add(nuevo);
+                        }
+                        else
+                        {
+                            return null; 
+                        }
+                    }
+                    else
+                    {
+                        return null; 
+                    }
+                }
+    
+                Condition condition = new Condition(condColumn, conditionOperator, conditionValue);
+                Update consultaUpdate = new Update(tableName, setValues, condition);
+
+                return consultaUpdate;
+            }
+            
+
+            //TODO DEADLINE 4
+            //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
+
             return null;
         }
-
         static List<string> CommaSeparatedNames(string text)
         {
             string[] textParts = text.Split(",", System.StringSplitOptions.RemoveEmptyEntries);
