@@ -283,26 +283,25 @@ namespace DbManager
                 if (Tables != null && Tables.Count != 0)
                 {
                     String toSave;
-                    List<ColumnDefinition> cd;
+                    List<ColumnDefinition> cds;
                     ColumnDefinition c;
                     Row r;
+
                     foreach (Table t in Tables)
                     {
-                        cd = new List<ColumnDefinition>();
-                        toSave = "";
+                        TextWriter writer = System.IO.File.CreateText(databaseName + "\\" + t.Name + ".txt"); //creates a new text file
+                        cds = new List<ColumnDefinition>();
                         for (int i = 0; i < t.NumColumns(); i++)
                         {
                             c = t.GetColumn(i);
-                            toSave += c.AsText() + "\n";
+                            writer.WriteLine(c.AsText());
                         }
-
+                        writer.WriteLine();
                         for (int i = 0; i < t.NumRows(); i++)
                         {
                             r = t.GetRow(i);
-                            toSave += "\n" + r.AsText();
+                            writer.WriteLine(r.AsText());
                         }
-                        TextWriter writer = System.IO.File.CreateText(databaseName + "\\" + t.Name + ".txt"); //creates a new text file
-                        writer.Write(toSave);
                         writer.Close();
                     }
                 }

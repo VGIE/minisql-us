@@ -1,4 +1,5 @@
 using DbManager.Parser;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -9,19 +10,19 @@ namespace DbManager
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
             //TODO DEADLINE 2
-            const string selectPattern = null;
+            const string selectPattern = null; //mikel
             
-            const string insertPattern = null;
+            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s+\(((?:\s*'([^']*)'\s*,)*(?:\s*'([^']*)'\s*))\)"; //kaiet
             
-            const string dropTablePattern = null;
+            const string dropTablePattern = null; //fabian
             
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
-            const string createTablePattern = null;
+            const string createTablePattern = null; //fabian
             
             const string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+((?:\w+='[^']*')(?:,\s*\w+='[^']*')*)\s+WHERE\s+(\w+)(=|<|>)'([^']*)'";
             
-            const string deletePattern = null;
+            const string deletePattern = @"DELETE\s+FROM\s+(\w+)\s+WHERE\s+(\w+)\s*(<|>|=)\s*'([^']*)'"; //kaiet
             
 
             //TODO DEADLINE 4
@@ -36,67 +37,49 @@ namespace DbManager
             const string addUserPattern = null;
             
             const string deleteUserPattern = null;
-            
+
 
             //TODO DEADLINE 2
             //Parse query using the regular expressions above one by one. If there is a match, create an instance of the query with the parsed parameters
             //For example, if the query is a "SELECT ...", there should be a match with selectPattern. We would create and return an instance of Select
             //initialized with the table name, the columns, and (possibly) an instance of Condition.
             //If there is no match, it means there is a syntax error. We will return null.
-            Match matchUpdate = Regex.Match(miniSQLQuery, updateTablePattern);
-            if (matchUpdate.Success)
+            Match match;
+            
+            match = Regex.Match(miniSQLQuery, insertPattern);
+            if (match.Success)
             {
-                string tableName = matchUpdate.Groups[1].Value;
-                string setString = matchUpdate.Groups[2].Value;
-                string condColumn = matchUpdate.Groups[3].Value;
-                string conditionOperator = matchUpdate.Groups[4].Value;
-                string conditionValue = matchUpdate.Groups[5].Value;
-
-                List<SetValue> setValues = new List<SetValue>();
-                List<string> asignaciones = CommaSeparatedNames(setString);
-
-                foreach(string asignacion in asignaciones)
+                if(match.Length != miniSQLQuery.Length) { return null; }
+                string toFilter, toSplit="";
+                bool copying = false;
+                toFilter = match.Groups[2].Value;
+                for(int i = 0; i < toFilter.Length; i++)
                 {
-                    string[] partes = asignacion.Split("=");
-                    if(partes.Length == 2)
+                    if (toFilter[i]=='\'')
                     {
-                        string columna = partes[0].Trim();
-                        string valorConComillas = partes[1].Trim();
-
-                        if (valorConComillas.StartsWith("'") == true && valorConComillas.EndsWith("'") == true)
-                        {
-                        //extraemos solo lo de dentro de las comillas
-                        string valorLimpio = valorConComillas.Substring(1, valorConComillas.Length - 2);
-                
-                        SetValue nuevo = new SetValue(columna, valorLimpio);
-                        setValues.Add(nuevo);
-                        }
-
-                        else
-                        {
-                        //si falta alguna comilla, devolvemos null porque la sintaxis está mal
-                        return null; 
-                        }
+                        copying = !copying;
                     }
-                    else
+                    else if (copying)
                     {
-                    //si el Split no da exactamente 2 partes, devolvemos null
-                    return null; 
+                        toSplit += toFilter[i];
+                    }
+                    else if (toFilter[i] == ',')
+                    {
+                        toSplit += ",";
                     }
                 }
-    
-            Condition condition = new Condition(condColumn, conditionOperator, conditionValue);
-            Update consultaUpdate = new Update(tableName, setValues, condition);
-
-            return consultaUpdate;
+                List<string> values = new List<string>();
+                values = CommaSeparatedNames(toSplit);
+                return new Insert(match.Groups[1].Value, values);
             }
 
-
-            //TODO DEADLINE 4
-            //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
-            
+            match = Regex.Match(miniSQLQuery, deletePattern);
+            if (match.Success)
+            {
+                if (match.Length != miniSQLQuery.Length) { return null; }
+                return new Delete(match.Groups[1].Value, new Condition(match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value));
+            }
             return null;
-           
         }
 
         static List<string> CommaSeparatedNames(string text)
