@@ -71,7 +71,7 @@ namespace DbManager
                 }
 
             Match match = Regex.Match(miniSQLQuery, insertPattern);
-            Match match;
+            
             
             match = Regex.Match(miniSQLQuery, insertPattern);
             if (match.Success)
@@ -102,11 +102,11 @@ namespace DbManager
 
             }
 
-            return null;
+            
 
 
            
-            }
+            
 
             match = Regex.Match(miniSQLQuery, deletePattern);
             if (match.Success)
