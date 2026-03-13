@@ -84,12 +84,15 @@ namespace OurTests
 
             obj = MiniSQLParser.Parse("UPDATE Personas Edad='30' WHERE Nombre='Morty'");
             Assert.False(obj is Update);
+            Assert.True(obj is null);
 
             obj = MiniSQLParser.Parse("UPDATE Personas SET Edad=30 WHERE Nombre=Morty");
             Assert.False(obj is Update);
+            Assert.True(obj is null);
 
             obj = MiniSQLParser.Parse("UPDATE Personas SET Edad='30' WHERE Nombre = 'Morty'");
             Assert.False(obj is Update);
+            Assert.True(obj is null);
 
             obj = MiniSQLParser.Parse("UPDATE Tabla SET Columna='Valor' WHERE Id='1'");
             Assert.True(obj is Update);
@@ -115,6 +118,86 @@ namespace OurTests
             Assert.Equal("=", condicionWhere.Operator);
             Assert.Equal("Morty", condicionWhere.LiteralValue);
         }
+
+        [Fact]
+
+        public void SelectCase()
+        {
+            Object obj;
+
+            obj = MiniSQLParser.Parse("SELECT dni FROM alumnos WHERE nombre='Charlicius'");
+            Assert.True(obj is Select);
+
+            Select select = (Select)obj;
+            Assert.Equal("alumnos", select.Table);
+            Assert.Equal(1, select.Columns.Count);
+            Assert.Equal("dni", select.Columns[0]);
+
+
+            obj = MiniSQLParser.Parse("SELECT dni,sexo,apellido FROM alumnos WHERE nombre='Charlicius'");
+            Assert.True(obj is Select);
+            obj = MiniSQLParser.Parse("SELECT dni FROM profesor");
+            Assert.True(obj is Select);
+            obj = MiniSQLParser.Parse("SELECT dni FROM profesor WHERE edad>60");
+            Assert.True(obj is Select);
+            obj = MiniSQLParser.Parse("SELECT FROM profesor WHERE edad>60");
+            Assert.False(obj is Select);
+            Assert.Null(obj);
+            obj = MiniSQLParser.Parse("Select nombre where dni = '123456'");
+            Assert.False(obj is Select);
+            Assert.Null(obj);
+            obj = MiniSQLParser.Parse("SELECT nombre WHERE dni = '123456'");
+            Assert.False(obj is Select);
+            Assert.Null(obj);
+
+
+
+        }
+        [Fact]
+        public void CreateTableTest()
+        {
+            Object obj;
+
+            obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca String,Modelo String)");
+            Assert.True(obj is CreateTable);
+            obj = MiniSQLParser.Parse("CREATE TABLE Coches ()");
+            Assert.True(obj is CreateTable);
+            obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca ,Modelo String)");
+            Assert.False(obj is CreateTable);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca String,Modelo String);");
+            Assert.False(obj is CreateTable);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("CREATE  TABLE Coches (Marca String  ,Modelo String) ");
+            Assert.False(obj is CreateTable);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("CREATE Table Coches (Marca String  ,Modelo String)");
+            Assert.False(obj is CreateTable);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("CREATE TABLE Coches (,Modelo String)");
+            Assert.False(obj is CreateTable);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca String,)");
+            Assert.False(obj is CreateTable);
+            Assert.True(obj is null);
+
+            obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca String,Modelo String,Ano Int)");
+            Assert.True(obj is CreateTable);
+            CreateTable create = (CreateTable)obj;
+
+            Assert.Equal("Coches", create.Table);
+            List<ColumnDefinition> cols = create.ColumnsParameters;
+            List<String> colsNomb = new List<String>();
+            foreach(ColumnDefinition c in cols)
+            {
+                colsNomb.Add(c.Name);
+            }
+            Assert.Equal("Marca", colsNomb[0]);
+            Assert.Equal("Modelo", colsNomb[1]);
+            Assert.Equal("Ano", colsNomb[2]);
+        }
+
+
 
     }
 

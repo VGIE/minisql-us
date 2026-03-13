@@ -10,32 +10,37 @@ namespace DbManager
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
             //TODO DEADLINE 2
-            const string selectPattern = null; //mikel
-            
+            const string selectPattern = @"SELECT\s+(.+)\s+FROM\s+(\w+)\s*(WHERE\s+(\w+)\s*([=<>])\s*(.+))*";
+
+
+
+
             const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s+\(((?:\s*'([^']*)'\s*,)*(?:\s*'([^']*)'\s*))\)"; //kaiet
-            
+
             const string dropTablePattern = null; //fabian
-            
+
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
-            const string createTablePattern = null; //fabian
             
             const string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+((?:\w+='[^']*')(?:,\s*\w+='[^']*')*)\s+WHERE\s+(\w+)(=|<|>)'([^']*)'";
             
+            const string createTablePattern = @"CREATE TABLE (\w+) \((\w+\s(?:String|Int|Double)(?:,\w+\s(?:String|Int|Double))*)?\)";//fabian
+
             const string deletePattern = @"DELETE\s+FROM\s+(\w+)\s+WHERE\s+(\w+)\s*(<|>|=)\s*'([^']*)'"; //kaiet
-            
+
+
 
             //TODO DEADLINE 4
             const string createSecurityProfilePattern = null;
-            
+
             const string dropSecurityProfilePattern = null;
-            
+
             const string grantPattern = null;
-            
+
             const string revokePattern = null;
-            
+
             const string addUserPattern = null;
-            
+
             const string deleteUserPattern = null;
 
 
@@ -45,20 +50,81 @@ namespace DbManager
             //initialized with the table name, the columns, and (possibly) an instance of Condition.
             //If there is no match, it means there is a syntax error. We will return null.
             Match match;
-            
+            match = Regex.Match(miniSQLQuery, createTablePattern);
+            if (match.Success) 
+            {
+                if (match.Length != miniSQLQuery.Length) { return null; }
+                List<ColumnDefinition> columnas = new List<ColumnDefinition>();
+                if (match.Groups[2].Value.Length == 0 || match.Groups[2].Value.Length == 1)
+                {
+                    //PREGUNTAR QUÉ HACER SI LAS COLUMNAS ESTÁN NULL
+                    return new CreateTable(match.Groups[1].Value, columnas);
+                }
+                else
+                {
+                    String[] cols = match.Groups[2].Value.Split(',');
+                    foreach (String s in cols)
+                    {
+                        String[] separados = s.Split(' ');
+                        String nombre = separados[0];
+                        String tipo = separados[1];
+                        ColumnDefinition rcol = null;
+                        if (tipo.Equals("String"))
+                        {
+                            rcol = new ColumnDefinition(ColumnDefinition.DataType.String, nombre);
+                        }
+                        if (tipo.Equals("Int"))
+                        {
+                            rcol = new ColumnDefinition(ColumnDefinition.DataType.Int, nombre);
+                        }
+                        if (tipo.Equals("Double"))
+                        {
+                            rcol = new ColumnDefinition(ColumnDefinition.DataType.Double, nombre);
+                        }
+                        columnas.Add(rcol);
+
+                    }
+                    return new CreateTable(match.Groups[1].Value, columnas);
+                }
+            }
+            else
+            {
+                Console.WriteLine("No matches found");
+            }
+
+            Match matchSelect = Regex.Match(miniSQLQuery, selectPattern);
+
+           
+                if (matchSelect.Success)
+                {
+                if (matchSelect.Length != miniSQLQuery.Length) { return null; }
+                string columns = matchSelect.Groups[1].Value;
+                string tableName = matchSelect.Groups[2].Value;
+                List<string> columnList = CommaSeparatedNames(columns);
+                Condition condition = null;
+
+                if (matchSelect.Groups[4].Success)
+                {
+                    string conditionColumn = matchSelect.Groups[4].Value;
+                    string conditionOperator = matchSelect.Groups[5].Value;
+                    string conditionValue = matchSelect.Groups[6].Value;
+
+                    condition = new Condition(conditionColumn, conditionOperator, conditionValue);
+                }
+
+                return new Select(tableName, columnList, condition);
+            }
+
             match = Regex.Match(miniSQLQuery, insertPattern);
             if (match.Success == true)
             {
-                if(match.Length != miniSQLQuery.Length) 
-                { 
-                    return null; 
-                }
-                string toFilter, toSplit="";
+                if (match.Length != miniSQLQuery.Length) { return null; }
+                string toFilter, toSplit = "";
                 bool copying = false;
                 toFilter = match.Groups[2].Value;
-                for(int i = 0; i < toFilter.Length; i++)
+                for (int i = 0; i < toFilter.Length; i++)
                 {
-                    if (toFilter[i]=='\'')
+                    if (toFilter[i] == '\'')
                     {
                         copying = !copying;
                     }
@@ -74,7 +140,15 @@ namespace DbManager
                 List<string> values = new List<string>();
                 values = CommaSeparatedNames(toSplit);
                 return new Insert(match.Groups[1].Value, values);
+
+
             }
+
+
+
+
+
+
 
             match = Regex.Match(miniSQLQuery, deletePattern);
             if (match.Success == true)
@@ -86,7 +160,6 @@ namespace DbManager
                 return new Delete(match.Groups[1].Value, new Condition(match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value));
             }
 
-            // --- TU BLOQUE UPDATE INTEGRADO ---
             match = Regex.Match(miniSQLQuery, updateTablePattern);
             if (match.Success == true)
             {
@@ -148,12 +221,12 @@ namespace DbManager
         {
             string[] textParts = text.Split(",", System.StringSplitOptions.RemoveEmptyEntries);
             List<string> commaSeparator = new List<string>();
-            for(int i=0; i < textParts.Length; i++)
+            for (int i = 0; i < textParts.Length; i++)
             {
                 commaSeparator.Add(textParts[i]);
             }
             return commaSeparator;
         }
-        
+
     }
 }
