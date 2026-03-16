@@ -10,7 +10,7 @@ namespace DbManager
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
             //TODO DEADLINE 2
-            const string selectPattern = @"SELECT\s+(.+)\s+FROM\s+(\w+)\s*(WHERE\s+(\w+)\s*([=<>])\s*(.+))*"; //corta
+            const string selectPattern = @"SELECT\s+(\w+(?:,\w+)*)\s+FROM\s+(\w+)(\s+WHERE\s+(\w+)([=<>])('([^']*)'))?"; //Mikel
 
             const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s+\(((?:'([^']*)',)*(?:'([^']*)'))\)"; //kaiet
 
@@ -19,7 +19,7 @@ namespace DbManager
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
             
-            const string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+((?:\w+='[^']*')(?:,\s*\w+='[^']*')*)\s+WHERE\s+(\w+)(=|<|>)'([^']*)'"; //Julen
+            const string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+((?:\w+='[^']*')(?:,\s+\w+='[^']*')*)\s+WHERE\s+(\w+)(=|<|>)'([^']*)'"; //Julen
             
             const string createTablePattern = @"CREATE TABLE (\w+) \((\w+\s(?:String|Int|Double)(?:,\w+\s(?:String|Int|Double))*)?\)"; //fabian
 
@@ -100,11 +100,11 @@ namespace DbManager
                 List<string> columnList = CommaSeparatedNames(columns);
                 Condition condition = null;
 
-                if (matchSelect.Groups[4].Success)
+                if (matchSelect.Groups[3].Success)
                 {
-                    string conditionColumn = matchSelect.Groups[4].Value;
-                    string conditionOperator = matchSelect.Groups[5].Value;
-                    string conditionValue = matchSelect.Groups[6].Value;
+                    string conditionColumn = matchSelect.Groups[3].Value;
+                    string conditionOperator = matchSelect.Groups[4].Value;
+                    string conditionValue = matchSelect.Groups[5].Value;
 
                     condition = new Condition(conditionColumn, conditionOperator, conditionValue);
                 }

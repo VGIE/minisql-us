@@ -141,15 +141,15 @@ namespace OurTests
             Assert.True(obj is Select);
             obj = MiniSQLParser.Parse("SELECT dni FROM profesor");
             Assert.True(obj is Select);
-            obj = MiniSQLParser.Parse("SELECT dni FROM profesor WHERE edad>60");
+            obj = MiniSQLParser.Parse("SELECT dni FROM profesor WHERE edad>'60'");
             Assert.True(obj is Select);
-            obj = MiniSQLParser.Parse("SELECT FROM profesor WHERE edad>60");
+            obj = MiniSQLParser.Parse("SELECT FROM profesor WHERE edad>'60'");
             Assert.False(obj is Select);
             Assert.Null(obj);
             obj = MiniSQLParser.Parse("Select nombre where dni = '123456'");
             Assert.False(obj is Select);
             Assert.Null(obj);
-            obj = MiniSQLParser.Parse("SELECT nombre WHERE dni = '123456'");
+            obj = MiniSQLParser.Parse("SELECT nombre WHERE dni='123456'");
             Assert.False(obj is Select);
             Assert.Null(obj);
 
