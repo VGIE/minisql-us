@@ -14,14 +14,14 @@ namespace DbManager
 
             const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s+\(((?:'([^']*)',)*(?:'([^']*)'))\)"; //kaiet
 
-            const string dropTablePattern = null; //fabian
+            const string dropTablePattern = @"DROP\s+TABLE\s+(\w+)"; //fabian
 
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
-            
+
             const string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+((?:\w+='[^']*')(?:,\s+\w+='[^']*')*)\s+WHERE\s+(\w+)(=|<|>)'([^']*)'"; //Julen
-            
-            const string createTablePattern = @"CREATE TABLE\s+(\w+)\s+\((\w+\s+(?:String|Int|Double)(?:,\w+\s+(?:String|Int|Double))*)?\)"; //fabian
+
+            const string createTablePattern = @"CREATE\s+TABLE\s+(\w+)\s+\((\w+\s+(?:String|Int|Double)(?:,\w+\s+(?:String|Int|Double))*)?\)"; //fabian
 
             const string deletePattern = @"DELETE\s+FROM\s+(\w+)\s+WHERE\s+(\w+)(<|>|=)'([^']*)'"; //kaiet
 
@@ -48,7 +48,7 @@ namespace DbManager
             //If there is no match, it means there is a syntax error. We will return null.
             Match match;
             match = Regex.Match(miniSQLQuery, createTablePattern);
-            if (match.Success) 
+            if (match.Success)
             {
                 if (match.Length != miniSQLQuery.Length) { return null; }
                 List<ColumnDefinition> columnas = new List<ColumnDefinition>();
@@ -89,11 +89,31 @@ namespace DbManager
                 Console.WriteLine("No matches found");
             }
 
+            match = Regex.Match(miniSQLQuery, dropTablePattern);
+            if (match.Success)
+            {
+                if (match.Length != miniSQLQuery.Length) { return null; }
+
+                if (match.Groups[1].Value.Length == 0 || match.Groups[1].Value.Length == 1)
+                {
+                    return null;
+                }
+                else
+                {
+                    String nombreTabla = match.Groups[1].Value;
+                    return new DropTable(match.Groups[1].Value);
+                }
+            }
+            else
+            {
+                Console.WriteLine("No matches found");
+            }
+
             Match matchSelect = Regex.Match(miniSQLQuery, selectPattern);
 
-           
-                if (matchSelect.Success)
-                {
+
+            if (matchSelect.Success)
+            {
                 if (matchSelect.Length != miniSQLQuery.Length) { return null; }
                 string columns = matchSelect.Groups[1].Value;
                 string tableName = matchSelect.Groups[2].Value;
@@ -150,9 +170,9 @@ namespace DbManager
             match = Regex.Match(miniSQLQuery, deletePattern);
             if (match.Success == true)
             {
-                if (match.Length != miniSQLQuery.Length) 
-                { 
-                    return null; 
+                if (match.Length != miniSQLQuery.Length)
+                {
+                    return null;
                 }
                 return new Delete(match.Groups[1].Value, new Condition(match.Groups[2].Value, match.Groups[3].Value, match.Groups[4].Value));
             }
@@ -174,11 +194,11 @@ namespace DbManager
                 List<SetValue> setValues = new List<SetValue>();
                 List<string> asignaciones = CommaSeparatedNames(setString);
 
-                foreach(string asignacion in asignaciones)
+                foreach (string asignacion in asignaciones)
                 {
                     string[] partes = asignacion.Split("=");
-                    
-                    if(partes.Length == 2)
+
+                    if (partes.Length == 2)
                     {
                         string columna = partes[0].Trim();
                         string valorConComillas = partes[1].Trim();
@@ -187,27 +207,27 @@ namespace DbManager
                         {
                             // extraemos solo lo de dentro de las comillas
                             string valorLimpio = valorConComillas.Substring(1, valorConComillas.Length - 2);
-                            
+
                             SetValue nuevo = new SetValue(columna, valorLimpio);
                             setValues.Add(nuevo);
                         }
                         else
                         {
-                            return null; 
+                            return null;
                         }
                     }
                     else
                     {
-                        return null; 
+                        return null;
                     }
                 }
-    
+
                 Condition condition = new Condition(condColumn, conditionOperator, conditionValue);
                 Update consultaUpdate = new Update(tableName, setValues, condition);
 
                 return consultaUpdate;
             }
-            
+
 
             //TODO DEADLINE 4
             //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
