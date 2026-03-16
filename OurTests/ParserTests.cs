@@ -19,8 +19,11 @@ namespace OurTests
             Assert.False(obj is Insert);
             Assert.True(obj is null);
             obj = MiniSQLParser.Parse("INSERT INTO esnulo VALUES ('', '0')");
+            Assert.False(obj is Insert);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("INSERT INTO esnulo VALUES ('','0')");
             Assert.True(obj is Insert);
-            obj = MiniSQLParser.Parse("INSERT tabla VALUES (1, 2);");
+            obj = MiniSQLParser.Parse("INSERT tabla VALUES (1,2);");
             Assert.False(obj is Insert);
             Assert.True(obj is null);
             obj = MiniSQLParser.Parse("INSERT INTO heyy    VALUES    ('hola','2','3')  ");
@@ -28,11 +31,11 @@ namespace OurTests
             Assert.True(obj is null);
             obj = MiniSQLParser.Parse("INSERT INTO heyy    VALUES    ('hola','2','3')");
             Assert.True(obj is Insert);
-            obj = MiniSQLParser.Parse("INSERT INTO table VALUES ('2', '19,)");
+            obj = MiniSQLParser.Parse("INSERT INTO table VALUES ('2','19,)");
             Assert.False(obj is Insert);
             Assert.True(obj is null);
 
-            obj = MiniSQLParser.Parse("INSERT INTO Usuario VALUES ('Maik', 'Tower', '14', '-1.3')");
+            obj = MiniSQLParser.Parse("INSERT INTO Usuario VALUES ('Maik','Tower','14','-1.3')");
             Assert.True(obj is Insert);
             Insert insert = (Insert)obj;
 
@@ -49,24 +52,24 @@ namespace OurTests
         {
             Object obj;
 
-            obj = MiniSQLParser.Parse("DELETE FROM esnulo WHERE nombre = '';");
-            Assert.False(obj is Delete);
-            Assert.True(obj is null);
             obj = MiniSQLParser.Parse("DELETE FROM esnulo WHERE nombre = ''");
-            Assert.True(obj is Delete);
-            obj = MiniSQLParser.Parse("DELETE FROM tabla WHERE anyo = 2");
             Assert.False(obj is Delete);
             Assert.True(obj is null);
-            obj = MiniSQLParser.Parse("DELETE FROM heyy    WHERE    name < 'Rodolfo'  ");
+            obj = MiniSQLParser.Parse("DELETE FROM esnulo WHERE nombre=''");
+            Assert.True(obj is Delete);
+            obj = MiniSQLParser.Parse("DELETE FROM tabla WHERE anyo=2");
             Assert.False(obj is Delete);
             Assert.True(obj is null);
-            obj = MiniSQLParser.Parse("DELETE FROM heyy    WHERE    name < 'Rodolfo'");
+            obj = MiniSQLParser.Parse("DELETE FROM heyy    WHERE    name<'Rodolfo'  ");
+            Assert.False(obj is Delete);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("DELETE FROM heyy    WHERE    name<'Rodolfo'");
             Assert.True(obj is Delete);
-            obj = MiniSQLParser.Parse("DELETE FROM table WHERE AGE > '19");
+            obj = MiniSQLParser.Parse("DELETE FROM table WHERE AGE>'19");
             Assert.False(obj is Delete);
             Assert.True(obj is null);
 
-            obj = MiniSQLParser.Parse("DELETE FROM Usuario WHERE nombre = 'Maik'");
+            obj = MiniSQLParser.Parse("DELETE FROM Usuario WHERE nombre='Maik'");
             Assert.True(obj is Delete);
             Delete delete = (Delete)obj;
 
@@ -74,6 +77,49 @@ namespace OurTests
             Assert.Equal("nombre", delete.Where.ColumnName);
             Assert.Equal("=", delete.Where.Operator);
             Assert.Equal("Maik", delete.Where.LiteralValue);
+        }
+
+
+        [Fact]
+        public void UpdateTest()
+        {
+            Object obj;
+
+            obj = MiniSQLParser.Parse("UPDATE Personas Edad='30' WHERE Nombre='Morty'");
+            Assert.False(obj is Update);
+            Assert.True(obj is null);
+
+            obj = MiniSQLParser.Parse("UPDATE Personas SET Edad=30 WHERE Nombre=Morty");
+            Assert.False(obj is Update);
+            Assert.True(obj is null);
+
+            obj = MiniSQLParser.Parse("UPDATE Personas SET Edad='30' WHERE Nombre = 'Morty'");
+            Assert.False(obj is Update);
+            Assert.True(obj is null);
+
+            obj = MiniSQLParser.Parse("UPDATE Tabla SET Columna='Valor' WHERE Id='1'");
+            Assert.True(obj is Update);
+
+            obj = MiniSQLParser.Parse("UPDATE Personas SET Edad='30', Pelo='Rubio' WHERE Nombre='Morty'");
+            Assert.True(obj is Update);
+            
+            Update updateObj = (Update)obj;
+
+            Assert.Equal("Personas", updateObj.Table);
+
+            List<SetValue> columnasActualizar = updateObj.Columns;
+            Assert.Equal(2, columnasActualizar.Count);
+            
+            Assert.Equal("Edad", columnasActualizar[0].ColumnName);
+            Assert.Equal("30", columnasActualizar[0].Value);
+
+            Assert.Equal("Pelo", columnasActualizar[1].ColumnName);
+            Assert.Equal("Rubio", columnasActualizar[1].Value);
+
+            Condition condicionWhere = updateObj.Where;
+            Assert.Equal("Nombre", condicionWhere.ColumnName);
+            Assert.Equal("=", condicionWhere.Operator);
+            Assert.Equal("Morty", condicionWhere.LiteralValue);
         }
 
         [Fact]
@@ -95,15 +141,15 @@ namespace OurTests
             Assert.True(obj is Select);
             obj = MiniSQLParser.Parse("SELECT dni FROM profesor");
             Assert.True(obj is Select);
-            obj = MiniSQLParser.Parse("SELECT dni FROM profesor WHERE edad>60");
+            obj = MiniSQLParser.Parse("SELECT dni FROM profesor WHERE edad>'60'");
             Assert.True(obj is Select);
-            obj = MiniSQLParser.Parse("SELECT FROM profesor WHERE edad>60");
+            obj = MiniSQLParser.Parse("SELECT FROM profesor WHERE edad>'60'");
             Assert.False(obj is Select);
             Assert.Null(obj);
             obj = MiniSQLParser.Parse("Select nombre where dni = '123456'");
             Assert.False(obj is Select);
             Assert.Null(obj);
-            obj = MiniSQLParser.Parse("SELECT nombre WHERE dni = '123456'");
+            obj = MiniSQLParser.Parse("SELECT nombre WHERE dni='123456'");
             Assert.False(obj is Select);
             Assert.Null(obj);
 
