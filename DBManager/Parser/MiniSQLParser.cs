@@ -10,23 +10,20 @@ namespace DbManager
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
             //TODO DEADLINE 2
-            const string selectPattern = @"SELECT\s+(.+)\s+FROM\s+(\w+)\s*(WHERE\s+(\w+)\s*([=<>])\s*(.+))*";
+            const string selectPattern = @"SELECT\s+(.+)\s+FROM\s+(\w+)\s*(WHERE\s+(\w+)\s*([=<>])\s*(.+))*"; //corta
 
-
-
-
-            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s+\(((?:\s*'([^']*)'\s*,)*(?:\s*'([^']*)'\s*))\)"; //kaiet
+            const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s+\(((?:'([^']*)',)*(?:'([^']*)'))\)"; //kaiet
 
             const string dropTablePattern = null; //fabian
 
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
             
-            const string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+((?:\w+='[^']*')(?:,\s*\w+='[^']*')*)\s+WHERE\s+(\w+)(=|<|>)'([^']*)'";
+            const string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+((?:\w+='[^']*')(?:,\s*\w+='[^']*')*)\s+WHERE\s+(\w+)(=|<|>)'([^']*)'"; //Julen
             
-            const string createTablePattern = @"CREATE TABLE (\w+) \((\w+\s(?:String|Int|Double)(?:,\w+\s(?:String|Int|Double))*)?\)";//fabian
+            const string createTablePattern = @"CREATE TABLE (\w+) \((\w+\s(?:String|Int|Double)(?:,\w+\s(?:String|Int|Double))*)?\)"; //fabian
 
-            const string deletePattern = @"DELETE\s+FROM\s+(\w+)\s+WHERE\s+(\w+)\s*(<|>|=)\s*'([^']*)'"; //kaiet
+            const string deletePattern = @"DELETE\s+FROM\s+(\w+)\s+WHERE\s+(\w+)(<|>|=)'([^']*)'"; //kaiet
 
 
 
