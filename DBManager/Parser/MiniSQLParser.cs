@@ -21,7 +21,7 @@ namespace DbManager
 
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
-            const string createTablePattern = @"CREATE TABLE (\w+) \((\w+\s(?:String|Int|Double)(?:,\w+\s(?:String|Int|Double))*)?\)";//fabian
+            const string createTablePattern = @"CREATE TABLE\s+(\w+)\s+\((\w+\s+(?:String|Int|Double)(?:,\w+\s+(?:String|Int|Double))*)?\)";//fabian
 
             const string updateTablePattern = null; //julen
 
@@ -64,7 +64,7 @@ namespace DbManager
                     String[] cols = match.Groups[2].Value.Split(',');
                     foreach (String s in cols)
                     {
-                        String[] separados = s.Split(' ');
+                        String[] separados = s.Split();
                         String nombre = separados[0];
                         String tipo = separados[1];
                         ColumnDefinition rcol = null;
