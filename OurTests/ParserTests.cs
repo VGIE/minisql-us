@@ -203,6 +203,43 @@ namespace OurTests
         }
 
 
+        [Fact]
+        public void DropTableTest()
+        {
+            Object obj;
+
+            obj = MiniSQLParser.Parse("DROP    TABLE     Coches");
+            Assert.True(obj is DropTable);
+            obj = MiniSQLParser.Parse("DROP TABLE Coches");
+            Assert.True(obj is DropTable);
+            obj = MiniSQLParser.Parse("DROP TABLE Coches;");
+            Assert.False(obj is DropTable);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("DROP;TABLE coches");
+            Assert.False(obj is DropTable);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("Drop TABLE coches");
+            Assert.False(obj is DropTable);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("DROP Table Coches");
+            Assert.False(obj is DropTable);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("DROP TABLE");
+            Assert.False(obj is DropTable);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("TABLE Coches");
+            Assert.False(obj is DropTable);
+            Assert.True(obj is null);
+           
+
+            obj = MiniSQLParser.Parse("DROP TABLE Coches");
+            Assert.True(obj is DropTable);
+            DropTable drop = (DropTable)obj;
+
+            Assert.Equal("Coches", drop.Table);
+        }
+
+
 
     }
 
