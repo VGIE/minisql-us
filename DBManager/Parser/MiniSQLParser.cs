@@ -19,7 +19,7 @@ namespace DbManager
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
 
-            const string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+((?:\w+='[^']*')(?:,\s+\w+='[^']*')*)\s+WHERE\s+(\w+)(=|<|>)'([^']*)'"; //Julen
+            const string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+((?:\w+='[^']*')(?:,\s*\w+='[^']*')*)\s+WHERE\s+(\w+)(=|<|>)'([^']*)'"; //Julen
 
             const string createTablePattern = @"CREATE\s+TABLE\s+(\w+)\s+\((\w+\s+(?:TEXT|INT|DOUBLE)(?:,\w+\s+(?:TEXT|INT|DOUBLE))*)?\)"; //fabian
 
@@ -191,8 +191,37 @@ namespace DbManager
                 string conditionOperator = match.Groups[4].Value;
                 string conditionValue = match.Groups[5].Value;
 
+                // --- ESTILO KAIET ---
+                string toFilter = setString;
+                string toSplit = "";
+                bool copying = false;
+
+                for (int i = 0; i < toFilter.Length; i++)
+                {
+                    if (toFilter[i] == '\'')
+                    {
+                        copying = !copying;
+                    }
+                    else if (copying == true)
+                    {
+                        toSplit += toFilter[i];
+                    }
+                    else if (toFilter[i] == ',')
+                    {
+                        toSplit += ",";
+                    }
+                    else if (toFilter[i] == '=')
+                    {
+                        toSplit += "=";
+                    }
+                    else if (toFilter[i] != ' ') // Ignoramos los espacios de fuera de las comillas
+                    {
+                        toSplit += toFilter[i];
+                    }
+                }
+
+                List<string> asignaciones = CommaSeparatedNames(toSplit);
                 List<SetValue> setValues = new List<SetValue>();
-                List<string> asignaciones = CommaSeparatedNames(setString);
 
                 foreach (string asignacion in asignaciones)
                 {
@@ -200,27 +229,16 @@ namespace DbManager
 
                     if (partes.Length == 2)
                     {
-                        string columna = partes[0].Trim();
-                        string valorConComillas = partes[1].Trim();
-
-                        if (valorConComillas.StartsWith("'") == true && valorConComillas.EndsWith("'") == true)
-                        {
-                            // extraemos solo lo de dentro de las comillas
-                            string valorLimpio = valorConComillas.Substring(1, valorConComillas.Length - 2);
-
-                            SetValue nuevo = new SetValue(columna, valorLimpio);
-                            setValues.Add(nuevo);
-                        }
-                        else
-                        {
-                            return null;
-                        }
+                        SetValue nuevo = new SetValue(partes[0], partes[1]);
+                        setValues.Add(nuevo);
                     }
                     else
                     {
-                        return null;
+                        // Si falla porque el valor tenía una coma dentro y el Split se ha vuelto loco
+                        return null; 
                     }
                 }
+                // --------------------
 
                 Condition condition = new Condition(condColumn, conditionOperator, conditionValue);
                 Update consultaUpdate = new Update(tableName, setValues, condition);
