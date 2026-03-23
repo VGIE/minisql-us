@@ -161,32 +161,32 @@ namespace OurTests
         {
             Object obj;
 
-            obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca String,Modelo String)");
+            obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca TEXT,Modelo TEXT)");
             Assert.True(obj is CreateTable);
             obj = MiniSQLParser.Parse("CREATE TABLE Coches ()");
             Assert.True(obj is CreateTable);
-            obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca ,Modelo String)");
+            obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca ,Modelo TEXT)");
             Assert.False(obj is CreateTable);
             Assert.True(obj is null);
-            obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca String,Modelo String);");
+            obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca TEXT,Modelo TEXT);");
             Assert.False(obj is CreateTable);
             Assert.True(obj is null);
-            obj = MiniSQLParser.Parse("CREATE  TABLE Coches (Marca String  ,Modelo String) ");
+            obj = MiniSQLParser.Parse("CREATE  TABLE Coches (Marca TEXT  ,Modelo TEXT) ");
             Assert.False(obj is CreateTable);
             Assert.True(obj is null);
-            obj = MiniSQLParser.Parse("CREATE Table Coches (Marca String  ,Modelo String)");
+            obj = MiniSQLParser.Parse("CREATE Table Coches (Marca TEXT  ,Modelo TEXT)");
             Assert.False(obj is CreateTable);
             Assert.True(obj is null);
-            obj = MiniSQLParser.Parse("CREATE TABLE Coches (,Modelo String)");
+            obj = MiniSQLParser.Parse("CREATE TABLE Coches (,Modelo TEXT)");
             Assert.False(obj is CreateTable);
             Assert.True(obj is null);
-            obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca String,)");
+            obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca TEXT,)");
             Assert.False(obj is CreateTable);
             Assert.True(obj is null);
-            obj = MiniSQLParser.Parse("CREATE TABLE        Coches          (Marca             String,Modelo String)");
+            obj = MiniSQLParser.Parse("CREATE TABLE        Coches          (Marca             TEXT,Modelo TEXT)");
             Assert.True(obj is CreateTable);
 
-            obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca String,Modelo String,Ano Int)");
+            obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca TEXT,Modelo TEXT,Ano INT)");
             Assert.True(obj is CreateTable);
             CreateTable create = (CreateTable)obj;
 

@@ -21,7 +21,7 @@ namespace DbManager
 
             const string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+((?:\w+='[^']*')(?:,\s+\w+='[^']*')*)\s+WHERE\s+(\w+)(=|<|>)'([^']*)'"; //Julen
 
-            const string createTablePattern = @"CREATE\s+TABLE\s+(\w+)\s+\((\w+\s+(?:String|Int|Double)(?:,\w+\s+(?:String|Int|Double))*)?\)"; //fabian
+            const string createTablePattern = @"CREATE\s+TABLE\s+(\w+)\s+\((\w+\s+(?:TEXT|INT|DOUBLE)(?:,\w+\s+(?:TEXT|INT|DOUBLE))*)?\)"; //fabian
 
             const string deletePattern = @"DELETE\s+FROM\s+(\w+)\s+WHERE\s+(\w+)(<|>|=)'([^']*)'"; //kaiet
 
@@ -66,15 +66,15 @@ namespace DbManager
                         String nombre = separados[0];
                         String tipo = separados[1];
                         ColumnDefinition rcol = null;
-                        if (tipo.Equals("String"))
+                        if (tipo.Equals("TEXT"))
                         {
                             rcol = new ColumnDefinition(ColumnDefinition.DataType.String, nombre);
                         }
-                        if (tipo.Equals("Int"))
+                        if (tipo.Equals("INT"))
                         {
                             rcol = new ColumnDefinition(ColumnDefinition.DataType.Int, nombre);
                         }
-                        if (tipo.Equals("Double"))
+                        if (tipo.Equals("DOUBLE"))
                         {
                             rcol = new ColumnDefinition(ColumnDefinition.DataType.Double, nombre);
                         }
