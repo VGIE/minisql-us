@@ -19,8 +19,8 @@ namespace DbManager
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
 
-            const string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+((?:\w+='[^']*')(?:,\s*\w+='[^']*')*)\s+WHERE\s+(\w+)(=|<|>)'([^']*)'"; //Julen
-
+            const string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+((?:\w+='[^']*')(?:,\w+='[^']*')*)\s+WHERE\s+(\w+)(=|<|>)'([^']*)'"; //Julen
+            
             const string createTablePattern = @"CREATE\s+TABLE\s+(\w+)\s+\((\w+\s+(?:TEXT|INT|DOUBLE)(?:,\w+\s+(?:TEXT|INT|DOUBLE))*)?\)"; //fabian
 
             const string deletePattern = @"DELETE\s+FROM\s+(\w+)\s+WHERE\s+(\w+)(<|>|=)'([^']*)'"; //kaiet
