@@ -80,15 +80,17 @@ namespace OurTests
         }
 
 
-        [Fact]
+       [Fact]
         public void UpdateTest()
         {
             Object obj;
 
+            // Caso NO VÁLIDO: Falta el SET
             obj = MiniSQLParser.Parse("UPDATE Personas Edad='30' WHERE Nombre='Morty'");
             Assert.False(obj is Update);
             Assert.True(obj is null);
 
+            // Caso NO VÁLIDO: Valores sin comillas
             obj = MiniSQLParser.Parse("UPDATE Personas SET Edad=30 WHERE Nombre=Morty");
             Assert.False(obj is Update);
             Assert.True(obj is null);
@@ -100,7 +102,7 @@ namespace OurTests
             obj = MiniSQLParser.Parse("UPDATE Tabla SET Columna='Valor' WHERE Id='1'");
             Assert.True(obj is Update);
 
-            obj = MiniSQLParser.Parse("UPDATE Personas SET Edad='30', Pelo='Rubio' WHERE Nombre='Morty'");
+            obj = MiniSQLParser.Parse("UPDATE Personas SET Edad='30',Pelo='Rubio' WHERE Nombre='Morty'");
             Assert.True(obj is Update);
             
             Update updateObj = (Update)obj;

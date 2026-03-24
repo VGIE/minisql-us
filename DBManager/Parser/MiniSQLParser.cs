@@ -161,12 +161,6 @@ namespace DbManager
 
             }
 
-
-
-
-
-
-
             match = Regex.Match(miniSQLQuery, deletePattern);
             if (match.Success == true)
             {
@@ -191,7 +185,6 @@ namespace DbManager
                 string conditionOperator = match.Groups[4].Value;
                 string conditionValue = match.Groups[5].Value;
 
-                // --- ESTILO KAIET ---
                 string toFilter = setString;
                 string toSplit = "";
                 bool copying = false;
@@ -200,6 +193,7 @@ namespace DbManager
                 {
                     if (toFilter[i] == '\'')
                     {
+                        toSplit += toFilter[i]; 
                         copying = !copying;
                     }
                     else if (copying == true)
@@ -214,7 +208,7 @@ namespace DbManager
                     {
                         toSplit += "=";
                     }
-                    else if (toFilter[i] != ' ') // Ignoramos los espacios de fuera de las comillas
+                    else if (toFilter[i] != ' ')
                     {
                         toSplit += toFilter[i];
                     }
@@ -229,16 +223,26 @@ namespace DbManager
 
                     if (partes.Length == 2)
                     {
-                        SetValue nuevo = new SetValue(partes[0], partes[1]);
-                        setValues.Add(nuevo);
+                        string columna = partes[0];
+                        string valor = partes[1];
+
+                        if (valor.StartsWith("'") && valor.EndsWith("'"))
+                        {
+                            string valorLimpio = valor.Substring(1, valor.Length - 2);
+                            SetValue nuevo = new SetValue(columna, valorLimpio);
+                            setValues.Add(nuevo);
+                        }
+                        else
+                        {
+                             return null;
+                        }
                     }
                     else
-                    {
-                        // Si falla porque el valor tenía una coma dentro y el Split se ha vuelto loco
+                    {   
                         return null; 
                     }
                 }
-                // --------------------
+               
 
                 Condition condition = new Condition(condColumn, conditionOperator, conditionValue);
                 Update consultaUpdate = new Update(tableName, setValues, condition);
