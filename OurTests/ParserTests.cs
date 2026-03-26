@@ -187,6 +187,8 @@ namespace OurTests
             Assert.True(obj is null);
             obj = MiniSQLParser.Parse("CREATE TABLE        Coches          (Marca             TEXT,Modelo TEXT)");
             Assert.True(obj is CreateTable);
+            obj = MiniSQLParser.Parse("CREATE     TABLE       Coches        (Marca       TEXT)");
+            Assert.True(obj is CreateTable);
 
             obj = MiniSQLParser.Parse("CREATE TABLE Coches (Marca TEXT,Modelo TEXT,Ano INT)");
             Assert.True(obj is CreateTable);

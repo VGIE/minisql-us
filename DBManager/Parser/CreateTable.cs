@@ -15,8 +15,14 @@ namespace DbManager
         {
             //TODO DEADLINE 2: Initialize member variables
             Table = table;
-            ColumnsParameters = columns;
-
+            if(columns != null)
+            {
+                ColumnsParameters = columns;
+            }
+            else
+            {
+                ColumnsParameters = new List<ColumnDefinition>();
+            }
 
         }
         public string Execute(Database database)

@@ -52,7 +52,7 @@ namespace DbManager
             {
                 if (match.Length != miniSQLQuery.Length) { return null; }
                 List<ColumnDefinition> columnas = new List<ColumnDefinition>();
-                if (match.Groups[2].Value.Length == 0 || match.Groups[2].Value.Length == 1)
+                if (match.Groups[2].Value == null || match.Groups[2].Value.Length == 0 || match.Groups[2].Value.Length == 1)
                 {
                     //PREGUNTAR QUÉ HACER SI LAS COLUMNAS ESTÁN NULL
                     return new CreateTable(match.Groups[1].Value, columnas);
@@ -84,10 +84,7 @@ namespace DbManager
                     return new CreateTable(match.Groups[1].Value, columnas);
                 }
             }
-            else
-            {
-                Console.WriteLine("No matches found");
-            }
+           
 
             match = Regex.Match(miniSQLQuery, dropTablePattern);
             if (match.Success)
@@ -104,10 +101,7 @@ namespace DbManager
                     return new DropTable(match.Groups[1].Value);
                 }
             }
-            else
-            {
-                Console.WriteLine("No matches found");
-            }
+            
 
             Match matchSelect = Regex.Match(miniSQLQuery, selectPattern);
 
