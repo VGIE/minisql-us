@@ -20,7 +20,7 @@ namespace DbManager
             //And then, an execution error should be given if a CreateTable without columns is executed
 
             const string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+((?:\w+='[^']*')(?:,\w+='[^']*')*)\s+WHERE\s+(\w+)(=|<|>)'([^']*)'"; //Julen
-            
+
             const string createTablePattern = @"CREATE\s+TABLE\s+(\w+)\s+\((\w+\s+(?:TEXT|INT|DOUBLE)(?:,\w+\s+(?:TEXT|INT|DOUBLE))*)?\)"; //fabian
 
             const string deletePattern = @"DELETE\s+FROM\s+(\w+)\s+WHERE\s+(\w+)(<|>|=)'([^']*)'"; //kaiet
@@ -28,17 +28,17 @@ namespace DbManager
 
 
             //TODO DEADLINE 4
-            const string createSecurityProfilePattern = null;
+            const string createSecurityProfilePattern = null; //mikel
 
-            const string dropSecurityProfilePattern = null;
+            const string dropSecurityProfilePattern = null; //mikel
 
-            const string grantPattern = null;
+            const string grantPattern = null; //julen
 
-            const string revokePattern = null;
+            const string revokePattern = null; //fabian
 
-            const string addUserPattern = null;
+            const string addUserPattern = @"ADD\s+USER\s+\(([A-Za-z]+),([A-Za-z]+),([A-Za-z]+)\)"; //kaiet
 
-            const string deleteUserPattern = null;
+            const string deleteUserPattern = null; //kaiet
 
 
             //TODO DEADLINE 2
@@ -46,11 +46,14 @@ namespace DbManager
             //For example, if the query is a "SELECT ...", there should be a match with selectPattern. We would create and return an instance of Select
             //initialized with the table name, the columns, and (possibly) an instance of Condition.
             //If there is no match, it means there is a syntax error. We will return null.
+
             Match match;
+
             match = Regex.Match(miniSQLQuery, createTablePattern);
             if (match.Success)
             {
                 if (match.Length != miniSQLQuery.Length) { return null; }
+
                 List<ColumnDefinition> columnas = new List<ColumnDefinition>();
                 if (match.Groups[2].Value.Length == 0 || match.Groups[2].Value.Length == 1)
                 {
@@ -79,7 +82,6 @@ namespace DbManager
                             rcol = new ColumnDefinition(ColumnDefinition.DataType.Double, nombre);
                         }
                         columnas.Add(rcol);
-
                     }
                     return new CreateTable(match.Groups[1].Value, columnas);
                 }
@@ -109,22 +111,21 @@ namespace DbManager
                 Console.WriteLine("No matches found");
             }
 
-            Match matchSelect = Regex.Match(miniSQLQuery, selectPattern);
 
-
-            if (matchSelect.Success)
+            match = Regex.Match(miniSQLQuery, selectPattern);
+            if (match.Success)
             {
-                if (matchSelect.Length != miniSQLQuery.Length) { return null; }
-                string columns = matchSelect.Groups[1].Value;
-                string tableName = matchSelect.Groups[2].Value;
+                if (match.Length != miniSQLQuery.Length) { return null; }
+                string columns = match.Groups[1].Value;
+                string tableName = match.Groups[2].Value;
                 List<string> columnList = CommaSeparatedNames(columns);
                 Condition condition = null;
 
-                if (matchSelect.Groups[3].Success)
+                if (match.Groups[3].Success)
                 {
-                    string conditionColumn = matchSelect.Groups[3].Value;
-                    string conditionOperator = matchSelect.Groups[4].Value;
-                    string conditionValue = matchSelect.Groups[5].Value;
+                    string conditionColumn = match.Groups[3].Value;
+                    string conditionOperator = match.Groups[4].Value;
+                    string conditionValue = match.Groups[5].Value;
 
                     condition = new Condition(conditionColumn, conditionOperator, conditionValue);
                 }
@@ -157,8 +158,6 @@ namespace DbManager
                 List<string> values = new List<string>();
                 values = CommaSeparatedNames(toSplit);
                 return new Insert(match.Groups[1].Value, values);
-
-
             }
 
             match = Regex.Match(miniSQLQuery, deletePattern);
@@ -193,7 +192,7 @@ namespace DbManager
                 {
                     if (toFilter[i] == '\'')
                     {
-                        toSplit += toFilter[i]; 
+                        toSplit += toFilter[i];
                         copying = !copying;
                     }
                     else if (copying == true)
@@ -234,15 +233,15 @@ namespace DbManager
                         }
                         else
                         {
-                             return null;
+                            return null;
                         }
                     }
                     else
-                    {   
-                        return null; 
+                    {
+                        return null;
                     }
                 }
-               
+
 
                 Condition condition = new Condition(condColumn, conditionOperator, conditionValue);
                 Update consultaUpdate = new Update(tableName, setValues, condition);
