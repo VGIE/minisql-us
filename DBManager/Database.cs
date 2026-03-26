@@ -24,6 +24,7 @@ namespace DbManager
         {
             //DEADLINE 1.B: Initalize the member variables
             m_username = adminUsername;
+            //instanciar manager!!! (SECURITY)
 
         }
 
