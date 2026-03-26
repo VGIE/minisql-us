@@ -62,9 +62,9 @@ namespace DbManager
                     String[] cols = match.Groups[2].Value.Split(',');
                     foreach (String s in cols)
                     {
-                        String[] separados = s.Split();
+                        String[] separados = s.Split(' ');
                         String nombre = separados[0];
-                        String tipo = separados[1];
+                        String tipo = separados[separados.Length-1];
                         ColumnDefinition rcol = null;
                         if (tipo.Equals("TEXT"))
                         {
