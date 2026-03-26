@@ -55,7 +55,7 @@ namespace DbManager
                 if (match.Length != miniSQLQuery.Length) { return null; }
 
                 List<ColumnDefinition> columnas = new List<ColumnDefinition>();
-                if (match.Groups[2].Value.Length == 0 || match.Groups[2].Value.Length == 1)
+                if (match.Groups[2].Value == null || match.Groups[2].Value.Length == 0 || match.Groups[2].Value.Length == 1)
                 {
                     //PREGUNTAR QUÉ HACER SI LAS COLUMNAS ESTÁN NULL
                     return new CreateTable(match.Groups[1].Value, columnas);
@@ -65,9 +65,9 @@ namespace DbManager
                     String[] cols = match.Groups[2].Value.Split(',');
                     foreach (String s in cols)
                     {
-                        String[] separados = s.Split();
+                        String[] separados = s.Split(' ');
                         String nombre = separados[0];
-                        String tipo = separados[1];
+                        String tipo = separados[separados.Length-1];
                         ColumnDefinition rcol = null;
                         if (tipo.Equals("TEXT"))
                         {
@@ -86,10 +86,7 @@ namespace DbManager
                     return new CreateTable(match.Groups[1].Value, columnas);
                 }
             }
-            else
-            {
-                Console.WriteLine("No matches found");
-            }
+           
 
             match = Regex.Match(miniSQLQuery, dropTablePattern);
             if (match.Success)
@@ -106,10 +103,7 @@ namespace DbManager
                     return new DropTable(match.Groups[1].Value);
                 }
             }
-            else
-            {
-                Console.WriteLine("No matches found");
-            }
+            
 
 
             match = Regex.Match(miniSQLQuery, selectPattern);
