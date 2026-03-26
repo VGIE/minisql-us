@@ -217,6 +217,11 @@ namespace DbManager
                     }
                 }
             }
+            if (columns == null || columns.Count == 0)
+            {
+                Table tablaError = new Table("Result", columns);
+                return tablaError;
+            }
             Table Result = new Table("Result", columns);
 
             List<int> resultRowsInd = new List<int>();
@@ -247,105 +252,105 @@ namespace DbManager
         }
 
         public bool Insert(List<string> values)
-{
-    //TODO DEADLINE 1.A: Insert a new row with the values given. If the number of values is not correct, return false. True otherwise
-
-    if (values != null && NumColumns() == values.Count)
-    {
-        Row inserting = new Row(ColumnDefinitions, values);
-        this.AddRow(inserting);
-        return true;
-    }
-    return false;
-
-}
-
-public bool Update(List<SetValue> setValues, Condition condition)
-{
-    //TODO DEADLINE 1.A: Update all the rows where the condition is true using all the SetValues (ColumnName-Value). If condition is null,
-    //return false, otherwise return true
-
-    List<String> columnas = new List<String>();
-
-    for (int i = 0; i < setValues.Count; i++)
-    {
-        columnas.Add(setValues[i].ColumnName);
-    }
-
-    if (condition != null)
-    {
-        List<int> resultRows = new List<int>();
-        resultRows = RowIndicesWhereConditionIsTrue(condition);
-        foreach (int i in resultRows)
         {
-            for (int j = 0; j < columnas.Count; j++)
+            //TODO DEADLINE 1.A: Insert a new row with the values given. If the number of values is not correct, return false. True otherwise
+
+            if (values != null && NumColumns() == values.Count)
             {
-                Rows[i].SetValue(columnas[j], setValues[j].Value);
+                Row inserting = new Row(ColumnDefinitions, values);
+                this.AddRow(inserting);
+                return true;
             }
+            return false;
 
         }
-        return true;
 
-    }
+        public bool Update(List<SetValue> setValues, Condition condition)
+        {
+            //TODO DEADLINE 1.A: Update all the rows where the condition is true using all the SetValues (ColumnName-Value). If condition is null,
+            //return false, otherwise return true
 
-    return false;
+            List<String> columnas = new List<String>();
+
+            for (int i = 0; i < setValues.Count; i++)
+            {
+                columnas.Add(setValues[i].ColumnName);
+            }
+
+            if (condition != null)
+            {
+                List<int> resultRows = new List<int>();
+                resultRows = RowIndicesWhereConditionIsTrue(condition);
+                foreach (int i in resultRows)
+                {
+                    for (int j = 0; j < columnas.Count; j++)
+                    {
+                        Rows[i].SetValue(columnas[j], setValues[j].Value);
+                    }
+
+                }
+                return true;
+
+            }
+
+            return false;
 
 
-}
+        }
 
 
 
-//Only for testing purposes
-public const string TestTableName = "TestTable";
-public const string TestColumn1Name = "Name";
-public const string TestColumn2Name = "Height";
-public const string TestColumn3Name = "Age";
-public const string TestColumn1Row1 = "Rodolfo";
-public const string TestColumn1Row2 = "Maider";
-public const string TestColumn1Row3 = "Pepe";
-public const string TestColumn2Row1 = "1.62";
-public const string TestColumn2Row2 = "1.67";
-public const string TestColumn2Row3 = "1.55";
-public const string TestColumn3Row1 = "25";
-public const string TestColumn3Row2 = "67";
-public const string TestColumn3Row3 = "51";
-public const ColumnDefinition.DataType TestColumn1Type = ColumnDefinition.DataType.String;
-public const ColumnDefinition.DataType TestColumn2Type = ColumnDefinition.DataType.Double;
-public const ColumnDefinition.DataType TestColumn3Type = ColumnDefinition.DataType.Int;
-public static Table CreateTestTable(string tableName = TestTableName)
-{
-    Table table = new Table(tableName, new List<ColumnDefinition>()
+        //Only for testing purposes
+        public const string TestTableName = "TestTable";
+        public const string TestColumn1Name = "Name";
+        public const string TestColumn2Name = "Height";
+        public const string TestColumn3Name = "Age";
+        public const string TestColumn1Row1 = "Rodolfo";
+        public const string TestColumn1Row2 = "Maider";
+        public const string TestColumn1Row3 = "Pepe";
+        public const string TestColumn2Row1 = "1.62";
+        public const string TestColumn2Row2 = "1.67";
+        public const string TestColumn2Row3 = "1.55";
+        public const string TestColumn3Row1 = "25";
+        public const string TestColumn3Row2 = "67";
+        public const string TestColumn3Row3 = "51";
+        public const ColumnDefinition.DataType TestColumn1Type = ColumnDefinition.DataType.String;
+        public const ColumnDefinition.DataType TestColumn2Type = ColumnDefinition.DataType.Double;
+        public const ColumnDefinition.DataType TestColumn3Type = ColumnDefinition.DataType.Int;
+        public static Table CreateTestTable(string tableName = TestTableName)
+        {
+            Table table = new Table(tableName, new List<ColumnDefinition>()
             {
                 new ColumnDefinition(TestColumn1Type, TestColumn1Name),
                 new ColumnDefinition(TestColumn2Type, TestColumn2Name),
                 new ColumnDefinition(TestColumn3Type, TestColumn3Name)
             });
-    table.Insert(new List<string>() { TestColumn1Row1, TestColumn2Row1, TestColumn3Row1 });
-    table.Insert(new List<string>() { TestColumn1Row2, TestColumn2Row2, TestColumn3Row2 });
-    table.Insert(new List<string>() { TestColumn1Row3, TestColumn2Row3, TestColumn3Row3 });
-    return table;
-}
-
-public void CheckForTesting(List<List<string>> rows)
-{
-    if (rows.Count != NumRows())
-        throw new Exception($"The table has {NumRows()} rows and {rows.Count} were expected");
-    int rowIndex = 0;
-    foreach (List<string> row in rows)
-    {
-        if (GetRow(rowIndex).Values.Count != row.Count)
-            if (rows.Count != NumRows())
-                throw new Exception($"The {rowIndex}-th row has {GetRow(rowIndex).Values.Count} values and {row.Count} were expected");
-
-        for (int columnIndex = 0; columnIndex < row.Count; columnIndex++)
-        {
-            if (GetRow(rowIndex).Values[columnIndex] != row[columnIndex])
-                if (rows.Count != NumRows())
-                    throw new Exception($"The [{rowIndex},{columnIndex}] element is {GetRow(rowIndex).Values[columnIndex]} instead of {row[columnIndex]}");
+            table.Insert(new List<string>() { TestColumn1Row1, TestColumn2Row1, TestColumn3Row1 });
+            table.Insert(new List<string>() { TestColumn1Row2, TestColumn2Row2, TestColumn3Row2 });
+            table.Insert(new List<string>() { TestColumn1Row3, TestColumn2Row3, TestColumn3Row3 });
+            return table;
         }
 
-        rowIndex++;
-    }
-}
+        public void CheckForTesting(List<List<string>> rows)
+        {
+            if (rows.Count != NumRows())
+                throw new Exception($"The table has {NumRows()} rows and {rows.Count} were expected");
+            int rowIndex = 0;
+            foreach (List<string> row in rows)
+            {
+                if (GetRow(rowIndex).Values.Count != row.Count)
+                    if (rows.Count != NumRows())
+                        throw new Exception($"The {rowIndex}-th row has {GetRow(rowIndex).Values.Count} values and {row.Count} were expected");
+
+                for (int columnIndex = 0; columnIndex < row.Count; columnIndex++)
+                {
+                    if (GetRow(rowIndex).Values[columnIndex] != row[columnIndex])
+                        if (rows.Count != NumRows())
+                            throw new Exception($"The [{rowIndex},{columnIndex}] element is {GetRow(rowIndex).Values[columnIndex]} instead of {row[columnIndex]}");
+                }
+
+                rowIndex++;
+            }
+        }
     }
 }

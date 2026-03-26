@@ -19,9 +19,9 @@ namespace DbManager
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
 
-            const string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+((?:\w+='[^']*')(?:,\s+\w+='[^']*')*)\s+WHERE\s+(\w+)(=|<|>)'([^']*)'"; //Julen
-
-            const string createTablePattern = @"CREATE\s+TABLE\s+(\w+)\s+\((\w+\s+(?:String|Int|Double)(?:,\w+\s+(?:String|Int|Double))*)?\)"; //fabian
+            const string updateTablePattern = @"UPDATE\s+(\w+)\s+SET\s+((?:\w+='[^']*')(?:,\w+='[^']*')*)\s+WHERE\s+(\w+)(=|<|>)'([^']*)'"; //Julen
+            
+            const string createTablePattern = @"CREATE\s+TABLE\s+(\w+)\s+\((\w+\s+(?:TEXT|INT|DOUBLE)(?:,\w+\s+(?:TEXT|INT|DOUBLE))*)?\)"; //fabian
 
             const string deletePattern = @"DELETE\s+FROM\s+(\w+)\s+WHERE\s+(\w+)(<|>|=)'([^']*)'"; //kaiet
 
@@ -52,7 +52,7 @@ namespace DbManager
             {
                 if (match.Length != miniSQLQuery.Length) { return null; }
                 List<ColumnDefinition> columnas = new List<ColumnDefinition>();
-                if (match.Groups[2].Value.Length == 0 || match.Groups[2].Value.Length == 1)
+                if (match.Groups[2].Value == null || match.Groups[2].Value.Length == 0 || match.Groups[2].Value.Length == 1)
                 {
                     //PREGUNTAR QUÉ HACER SI LAS COLUMNAS ESTÁN NULL
                     return new CreateTable(match.Groups[1].Value, columnas);
@@ -66,15 +66,15 @@ namespace DbManager
                         String nombre = separados[0];
                         String tipo = separados[1];
                         ColumnDefinition rcol = null;
-                        if (tipo.Equals("String"))
+                        if (tipo.Equals("TEXT"))
                         {
                             rcol = new ColumnDefinition(ColumnDefinition.DataType.String, nombre);
                         }
-                        if (tipo.Equals("Int"))
+                        if (tipo.Equals("INT"))
                         {
                             rcol = new ColumnDefinition(ColumnDefinition.DataType.Int, nombre);
                         }
-                        if (tipo.Equals("Double"))
+                        if (tipo.Equals("DOUBLE"))
                         {
                             rcol = new ColumnDefinition(ColumnDefinition.DataType.Double, nombre);
                         }
@@ -84,10 +84,7 @@ namespace DbManager
                     return new CreateTable(match.Groups[1].Value, columnas);
                 }
             }
-            else
-            {
-                Console.WriteLine("No matches found");
-            }
+           
 
             match = Regex.Match(miniSQLQuery, dropTablePattern);
             if (match.Success)
@@ -104,10 +101,7 @@ namespace DbManager
                     return new DropTable(match.Groups[1].Value);
                 }
             }
-            else
-            {
-                Console.WriteLine("No matches found");
-            }
+            
 
             Match matchSelect = Regex.Match(miniSQLQuery, selectPattern);
 
@@ -161,12 +155,6 @@ namespace DbManager
 
             }
 
-
-
-
-
-
-
             match = Regex.Match(miniSQLQuery, deletePattern);
             if (match.Success == true)
             {
@@ -191,8 +179,37 @@ namespace DbManager
                 string conditionOperator = match.Groups[4].Value;
                 string conditionValue = match.Groups[5].Value;
 
+                string toFilter = setString;
+                string toSplit = "";
+                bool copying = false;
+
+                for (int i = 0; i < toFilter.Length; i++)
+                {
+                    if (toFilter[i] == '\'')
+                    {
+                        toSplit += toFilter[i]; 
+                        copying = !copying;
+                    }
+                    else if (copying == true)
+                    {
+                        toSplit += toFilter[i];
+                    }
+                    else if (toFilter[i] == ',')
+                    {
+                        toSplit += ",";
+                    }
+                    else if (toFilter[i] == '=')
+                    {
+                        toSplit += "=";
+                    }
+                    else if (toFilter[i] != ' ')
+                    {
+                        toSplit += toFilter[i];
+                    }
+                }
+
+                List<string> asignaciones = CommaSeparatedNames(toSplit);
                 List<SetValue> setValues = new List<SetValue>();
-                List<string> asignaciones = CommaSeparatedNames(setString);
 
                 foreach (string asignacion in asignaciones)
                 {
@@ -200,27 +217,26 @@ namespace DbManager
 
                     if (partes.Length == 2)
                     {
-                        string columna = partes[0].Trim();
-                        string valorConComillas = partes[1].Trim();
+                        string columna = partes[0];
+                        string valor = partes[1];
 
-                        if (valorConComillas.StartsWith("'") == true && valorConComillas.EndsWith("'") == true)
+                        if (valor.StartsWith("'") && valor.EndsWith("'"))
                         {
-                            // extraemos solo lo de dentro de las comillas
-                            string valorLimpio = valorConComillas.Substring(1, valorConComillas.Length - 2);
-
+                            string valorLimpio = valor.Substring(1, valor.Length - 2);
                             SetValue nuevo = new SetValue(columna, valorLimpio);
                             setValues.Add(nuevo);
                         }
                         else
                         {
-                            return null;
+                             return null;
                         }
                     }
                     else
-                    {
-                        return null;
+                    {   
+                        return null; 
                     }
                 }
+               
 
                 Condition condition = new Condition(condColumn, conditionOperator, conditionValue);
                 Update consultaUpdate = new Update(tableName, setValues, condition);

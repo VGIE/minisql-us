@@ -219,6 +219,15 @@ namespace OurTests
             List<string> nombresc2 = new List<string> { c2.Name, c.Name };
             Assert.Equal(table3.ToString(), table.Select(nombresc2, null).ToString());
 
+            //TESTEAR QUE CUANDO TE PASAN UNA COLUMNA QUE NO EXISTE, DEVUELVA UNA TABLA VACIA
+
+            List<ColumnDefinition> columns4 = new List<ColumnDefinition>();
+            Table table4 = (new Table("test", columns4));
+            List<string> nombresc3 = new List<string> { "Edad", "Apellido" };
+
+            Assert.Equal(table4.ToString(), table.Select(nombresc3, null).ToString());
+
+
         }
 
 
