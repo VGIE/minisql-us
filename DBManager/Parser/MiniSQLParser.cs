@@ -34,7 +34,7 @@ namespace DbManager
 
             const string grantPattern = null; //julen
 
-            const string revokePattern = null; //fabian
+            const string revokePattern = @"REVOKE\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+([A-Za-z]+)"; //fabian
 
             const string addUserPattern = @"ADD\s+USER\s+\(([A-Za-z]+),([A-Za-z]+),([A-Za-z]+)\)"; //kaiet
 
@@ -269,8 +269,18 @@ namespace DbManager
                 return (new DeleteUser(match.Groups[1].Value));
             }
 
+            match = Regex.Match(miniSQLQuery, revokePattern);
+            if (match.Success)
+            {
+                if (match.Length != miniSQLQuery.Length) { return null; }
+
+                return (new Revoke(match.Groups[1].Value, match.Groups[2].Value, match.Groups[3].Value));
+            }
+
             return null;
         }
+
+
         static List<string> CommaSeparatedNames(string text)
         {
             string[] textParts = text.Split(",", System.StringSplitOptions.RemoveEmptyEntries);
