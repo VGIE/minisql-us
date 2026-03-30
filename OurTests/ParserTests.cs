@@ -305,5 +305,34 @@ namespace OurTests
 
 
         }
+
+        [Fact]
+        public void revokeTest()
+        {
+            Object obj;
+
+            obj = MiniSQLParser.Parse("REVOKE               DELETE              ON                 Coches                  TO              User");
+            Assert.True(obj is Revoke);
+            obj = MiniSQLParser.Parse("REVOKE SELECT ON Coches TO Admin");
+            Assert.True(obj is Revoke);
+            obj = MiniSQLParser.Parse("REVOKE INSERT ON coches TO Admin");
+            Assert.True(obj is Revoke);
+            obj = MiniSQLParser.Parse("REVOKE Delete ON Coches TO UserONE");
+            Assert.False(obj is Revoke);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("REVoke DELETE ON Coches TO UserTwo");
+            Assert.False(obj is Revoke);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("REVOKE INSERT ON Coches TO User;");
+            Assert.False(obj is Revoke);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("REVOKE INSERT");
+            Assert.False(obj is Revoke);
+            Assert.True(obj is null);
+
+            //TODO DEADLINE 5
+
+
+        }
     }
 }
