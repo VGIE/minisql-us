@@ -38,7 +38,7 @@ namespace DbManager
 
             const string addUserPattern = @"ADD\s+USER\s+\(([A-Za-z]+),([A-Za-z]+),([A-Za-z]+)\)"; //kaiet
 
-            const string deleteUserPattern = null; //kaiet
+            const string deleteUserPattern = @"DELETE\s+USER\s+([A-Za-z]+)"; //kaiet
 
 
             //TODO DEADLINE 2
@@ -246,6 +246,28 @@ namespace DbManager
 
             //TODO DEADLINE 4
             //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
+
+            match = Regex.Match(miniSQLQuery, addUserPattern);
+            if (match.Success == true)
+            {
+                if (match.Length != miniSQLQuery.Length)
+                {
+                    return null;
+                }
+
+                return (new AddUser(match.Groups[1].Value, match.Groups[2].Value, match.Groups[3].Value));
+            }
+
+            match = Regex.Match(miniSQLQuery, deleteUserPattern);
+            if (match.Success == true)
+            {
+                if (match.Length != miniSQLQuery.Length)
+                {
+                    return null;
+                }
+
+                return (new DeleteUser(match.Groups[1].Value));
+            }
 
             return null;
         }
