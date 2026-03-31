@@ -44,7 +44,13 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Remove this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
-            
+            Profile perfilBuscado = ProfileByName(profileName);
+
+            if (perfilBuscado != null)
+            {
+                perfilBuscado.GrantPrivilege(table, privilege);
+            }
+
         }
 
         public bool IsGrantedPrivilege(string username, string table, Privilege privilege)
