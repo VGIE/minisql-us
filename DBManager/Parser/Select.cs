@@ -29,10 +29,17 @@ namespace DbManager
             
             Table table = database.TableByName(Table);
 
-            Table resultado = database.Select(Table,Columns,Where);
+            Table resultado = database.Select(Table, Columns, Where);
+            if (resultado != null)
+            {
 
-            return resultado.ToString();
-            
-        }
+
+                return resultado.ToString();
+
+            } else {
+                return database.LastErrorMessage;
+            } 
+
+            }
     }
 }

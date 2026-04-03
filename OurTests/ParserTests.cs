@@ -80,7 +80,7 @@ namespace OurTests
         }
 
 
-       [Fact]
+        [Fact]
         public void UpdateTest()
         {
             Object obj;
@@ -104,14 +104,14 @@ namespace OurTests
 
             obj = MiniSQLParser.Parse("UPDATE Personas SET Edad='30',Pelo='Rubio' WHERE Nombre='Morty'");
             Assert.True(obj is Update);
-            
+
             Update updateObj = (Update)obj;
 
             Assert.Equal("Personas", updateObj.Table);
 
             List<SetValue> columnasActualizar = updateObj.Columns;
             Assert.Equal(2, columnasActualizar.Count);
-            
+
             Assert.Equal("Edad", columnasActualizar[0].ColumnName);
             Assert.Equal("30", columnasActualizar[0].Value);
 
@@ -197,7 +197,7 @@ namespace OurTests
             Assert.Equal("Coches", create.Table);
             List<ColumnDefinition> cols = create.ColumnsParameters;
             List<String> colsNomb = new List<String>();
-            foreach(ColumnDefinition c in cols)
+            foreach (ColumnDefinition c in cols)
             {
                 colsNomb.Add(c.Name);
             }
@@ -234,7 +234,7 @@ namespace OurTests
             obj = MiniSQLParser.Parse("TABLE Coches");
             Assert.False(obj is DropTable);
             Assert.True(obj is null);
-           
+
 
             obj = MiniSQLParser.Parse("DROP TABLE Coches");
             Assert.True(obj is DropTable);
@@ -243,8 +243,96 @@ namespace OurTests
             Assert.Equal("Coches", drop.Table);
         }
 
+        [Fact]
+        public void addUserTest()
+        {
+            Object obj;
+
+            obj = MiniSQLParser.Parse("ADD USER (A, A, A);");
+            Assert.False(obj is AddUser);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("ADD USER (A, A, A)");
+            Assert.False(obj is AddUser);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("ADD USER (A,A,A)");
+            Assert.True(obj is AddUser);
+            obj = MiniSQLParser.Parse("ADD USER (A2,23,1)");
+            Assert.False(obj is AddUser);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("ADD      USER     (A,A,A)   ");
+            Assert.False(obj is AddUser);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("ADD      USER     (A,A,A)");
+            Assert.True(obj is AddUser);
+            obj = MiniSQLParser.Parse("ADD USER (A,A,)");
+            Assert.False(obj is AddUser);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("ADD USER ('A','A','a')");
+            Assert.False(obj is AddUser);
+            Assert.True(obj is null);
+
+            //TODO DEADLINE 5
 
 
+        }
+
+        [Fact]
+        public void deleteUserTest()
+        {
+            Object obj;
+
+            obj = MiniSQLParser.Parse("DELETE USER a;");
+            Assert.False(obj is DeleteUser);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("DELETE USER a");
+            Assert.True(obj is DeleteUser);
+            obj = MiniSQLParser.Parse("DELETE USER a2");
+            Assert.False(obj is DeleteUser);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("DELETE     USER     a   ");
+            Assert.False(obj is DeleteUser);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("DELETE     USER     a");
+            Assert.True(obj is DeleteUser);
+            obj = MiniSQLParser.Parse("DELETE USER ");
+            Assert.False(obj is DeleteUser);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("DELETE USER 'a'");
+            Assert.False(obj is DeleteUser);
+            Assert.True(obj is null);
+
+            //TODO DEADLINE 5
+
+
+        }
+
+        [Fact]
+        public void revokeTest()
+        {
+            Object obj;
+
+            obj = MiniSQLParser.Parse("REVOKE               DELETE              ON                 Coches                  TO              User");
+            Assert.True(obj is Revoke);
+            obj = MiniSQLParser.Parse("REVOKE SELECT ON Coches TO Admin");
+            Assert.True(obj is Revoke);
+            obj = MiniSQLParser.Parse("REVOKE INSERT ON coches TO Admin");
+            Assert.True(obj is Revoke);
+            obj = MiniSQLParser.Parse("REVOKE Delete ON Coches TO UserONE");
+            Assert.False(obj is Revoke);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("REVoke DELETE ON Coches TO UserTwo");
+            Assert.False(obj is Revoke);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("REVOKE INSERT ON Coches TO User;");
+            Assert.False(obj is Revoke);
+            Assert.True(obj is null);
+            obj = MiniSQLParser.Parse("REVOKE INSERT");
+            Assert.False(obj is Revoke);
+            Assert.True(obj is null);
+
+            //TODO DEADLINE 5
+
+
+        }
     }
-
 }

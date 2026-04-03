@@ -10,7 +10,7 @@ namespace DbManager
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
             //TODO DEADLINE 2
-            const string selectPattern = @"SELECT\s+(\w+(?:,\w+)*)\s+FROM\s+(\w+)(\s+WHERE\s+(\w+)([=<>])('([^']*)'))?"; //Mikel
+            const string selectPattern = @"SELECT\s+(\w+(?:,\w+)*)\s+FROM\s+(\w+)(?:\s+WHERE\s+(\w+)([=<>])'([^']*'))?"; //Mikel
 
             const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s+\(((?:'([^']*)',)*(?:'([^']*)'))\)"; //kaiet
 
@@ -34,11 +34,11 @@ namespace DbManager
 
             const string grantPattern = @"GRANT\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+(\w+)"; //julen
 
-            const string revokePattern = null; //fabian
+            const string revokePattern = @"REVOKE\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+([A-Za-z]+)"; //fabian
 
             const string addUserPattern = @"ADD\s+USER\s+\(([A-Za-z]+),([A-Za-z]+),([A-Za-z]+)\)"; //kaiet
 
-            const string deleteUserPattern = null; //kaiet
+            const string deleteUserPattern = @"DELETE\s+USER\s+([A-Za-z]+)"; //kaiet
 
 
             //TODO DEADLINE 2
@@ -259,8 +259,40 @@ namespace DbManager
                 return consultaGrant;
             }
 
+            match = Regex.Match(miniSQLQuery, addUserPattern);
+            if (match.Success == true)
+            {
+                if (match.Length != miniSQLQuery.Length)
+                {
+                    return null;
+                }
+
+                return (new AddUser(match.Groups[1].Value, match.Groups[2].Value, match.Groups[3].Value));
+            }
+
+            match = Regex.Match(miniSQLQuery, deleteUserPattern);
+            if (match.Success == true)
+            {
+                if (match.Length != miniSQLQuery.Length)
+                {
+                    return null;
+                }
+
+                return (new DeleteUser(match.Groups[1].Value));
+            }
+
+            match = Regex.Match(miniSQLQuery, revokePattern);
+            if (match.Success)
+            {
+                if (match.Length != miniSQLQuery.Length) { return null; }
+
+                return (new Revoke(match.Groups[1].Value, match.Groups[2].Value, match.Groups[3].Value));
+            }
+
             return null;
         }
+
+
         static List<string> CommaSeparatedNames(string text)
         {
             string[] textParts = text.Split(",", System.StringSplitOptions.RemoveEmptyEntries);
