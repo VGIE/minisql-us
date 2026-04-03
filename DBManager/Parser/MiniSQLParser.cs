@@ -246,6 +246,18 @@ namespace DbManager
 
             //TODO DEADLINE 4
             //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
+            match = Regex.Match(miniSQLQuery, grantPattern);
+            if (match.Success == true)
+            {
+                if (match.Length != miniSQLQuery.Length)
+                {
+                    return null;
+                }
+
+                Grant consultaGrant = new Grant(match.Groups[1].Value, match.Groups[2].Value, match.Groups[3].Value);
+                
+                return consultaGrant;
+            }
 
             return null;
         }
