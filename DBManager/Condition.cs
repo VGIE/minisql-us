@@ -36,7 +36,10 @@ namespace DbManager
 
             int resultado = 0;
 
-
+            if (value == null || value == "")
+            {
+                return false;
+            }
 
             if (type == ColumnDefinition.DataType.String)
             {
