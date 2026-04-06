@@ -295,7 +295,7 @@ namespace DbManager
 
         static List<string> CommaSeparatedNames(string text)
         {
-            string[] textParts = text.Split(",", System.StringSplitOptions.RemoveEmptyEntries);
+           string[] textParts = text.Split(","); 
             List<string> commaSeparator = new List<string>();
             for (int i = 0; i < textParts.Length; i++)
             {

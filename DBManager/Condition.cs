@@ -36,7 +36,7 @@ namespace DbManager
 
             int resultado = 0;
 
-            if (value == null || value == "")
+            if (value == null)
             {
                 return false;
             }
