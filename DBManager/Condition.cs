@@ -47,26 +47,52 @@ namespace DbManager
             }
             else if (type == ColumnDefinition.DataType.Int)
             {
-                int valor = Int32.Parse(value);
-                int valor2 = Int32.Parse(LiteralValue);
-
-                resultado = valor.CompareTo(valor2);
+                try 
+                {
+                    int valor = Int32.Parse(value);
+                    int valor2 = Int32.Parse(LiteralValue);
+                    resultado = valor.CompareTo(valor2);
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
             else if (type == ColumnDefinition.DataType.Double)
             {
-                double valor = Double.Parse(value);
-                double valor2 = Double.Parse(LiteralValue);
+                try 
+                {
+                    string v1 = value.Replace('.', ',');
+                    string v2 = LiteralValue.Replace('.', ',');
 
-                resultado = valor.CompareTo(valor2);
+                    double valor = Double.Parse(v1);
+                    double valor2 = Double.Parse(v2);
 
+                    resultado = valor.CompareTo(valor2);
+                }
+                catch (Exception)
+                {
+                    try 
+                    {
+                        double valor = Double.Parse(value);
+                        double valor2 = Double.Parse(LiteralValue);
+                        resultado = valor.CompareTo(valor2);
+                    }
+                    catch (Exception)
+                    {
+                        return false;
+                    }
+                }
             }
             if (Operator == mayorQue && resultado > 0)
             {
                 return true;
-            }else if (Operator == igualQue && resultado == 0)
+            }
+            else if (Operator == igualQue && resultado == 0)
             {
                 return true;
-            }else if((Operator == menorQue && resultado < 0))
+            }
+            else if ((Operator == menorQue && resultado < 0))
             {
                 return true;
             }
