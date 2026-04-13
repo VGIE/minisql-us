@@ -36,7 +36,9 @@ namespace DbManager
 
                 return resultado.ToString();
 
-            } else {
+            }
+            else
+            {
                 return database.LastErrorMessage;
             } 
 
