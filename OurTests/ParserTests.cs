@@ -155,6 +155,11 @@ namespace OurTests
             Assert.False(obj is Select);
             Assert.Null(obj);
 
+            Database db = new Database("", "");
+            db.ExecuteMiniSQLQuery("CREATE TABLE Usuario (nombre TEXT,edad INT)");
+            db.ExecuteMiniSQLQuery("INSERT INTO Usuario VALUES ('Farlopo','19')");
+            db.ExecuteMiniSQLQuery("INSERT INTO Usuario VALUES ('Eustaquio','88')");
+            string resultado = db.ExecuteMiniSQLQuery("SELECT nombre,edad FROM Usuario WHERE nombre='Farlopo'");
 
 
         }

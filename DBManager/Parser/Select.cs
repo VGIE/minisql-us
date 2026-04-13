@@ -44,9 +44,8 @@ namespace DbManager
             if (resultado != null)
             {
                 return resultado.ToString();
-            }
-            else
-            {
+
+            } else {
                 return database.LastErrorMessage;
             }
 

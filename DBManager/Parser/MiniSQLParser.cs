@@ -32,7 +32,7 @@ namespace DbManager
 
             const string dropSecurityProfilePattern = null; //mikel
 
-            const string grantPattern = null; //julen
+            const string grantPattern = @"GRANT\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+(\w+)"; //julen
 
             const string revokePattern = @"REVOKE\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+([A-Za-z]+)"; //fabian
 
@@ -246,6 +246,18 @@ namespace DbManager
 
             //TODO DEADLINE 4
             //Do the same for the security queries (CREATE SECURITY PROFILE, ...)
+            match = Regex.Match(miniSQLQuery, grantPattern);
+            if (match.Success == true)
+            {
+                if (match.Length != miniSQLQuery.Length)
+                {
+                    return null;
+                }
+
+                Grant consultaGrant = new Grant(match.Groups[1].Value, match.Groups[2].Value, match.Groups[3].Value);
+                
+                return consultaGrant;
+            }
 
             match = Regex.Match(miniSQLQuery, addUserPattern);
             if (match.Success == true)
@@ -283,7 +295,7 @@ namespace DbManager
 
         static List<string> CommaSeparatedNames(string text)
         {
-            string[] textParts = text.Split(",", System.StringSplitOptions.RemoveEmptyEntries);
+           string[] textParts = text.Split(","); 
             List<string> commaSeparator = new List<string>();
             for (int i = 0; i < textParts.Length; i++)
             {
