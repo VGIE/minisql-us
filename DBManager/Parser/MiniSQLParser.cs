@@ -32,7 +32,7 @@ namespace DbManager
 
             const string dropSecurityProfilePattern = null; //mikel
 
-            const string grantPattern = @"GRANT\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+(\w+)"; //julen
+            const string grantPattern = @"GRANT\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+([A-Za-z]+)"; //julen
 
             const string revokePattern = @"REVOKE\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+([A-Za-z]+)"; //fabian
 
