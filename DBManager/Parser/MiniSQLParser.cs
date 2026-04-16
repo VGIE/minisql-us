@@ -28,9 +28,9 @@ namespace DbManager
 
 
             //TODO DEADLINE 4
-            const string createSecurityProfilePattern = @"CREATE\s+SECURITY\s+PROFILE\s+(\w)\s*"; //mikel
+            const string createSecurityProfilePattern = @"CREATE\s+SECURITY\s+PROFILE\s+(\w+)\s*"; //mikel
 
-            const string dropSecurityProfilePattern = @"DROP\s+SECURITY\s+PROFILE\s+(\w)\s*"; //mikel
+            const string dropSecurityProfilePattern = @"DROP\s+SECURITY\s+PROFILE\s+(\w+)\s*"; //mikel
 
             const string grantPattern = @"GRANT\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+([A-Za-z]+)"; //julen
 
