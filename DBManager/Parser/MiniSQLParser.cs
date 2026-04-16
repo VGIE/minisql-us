@@ -10,11 +10,11 @@ namespace DbManager
         public static MiniSqlQuery Parse(string miniSQLQuery)
         {
             //TODO DEADLINE 2
-            const string selectPattern = @"SELECT\s+(\w+(?:,\w+)*)\s+FROM\s+(\w+)(?:\s+WHERE\s+(\w+)([=<>])'([^']*)')?"; //Mikel
+            const string selectPattern = @"SELECT\s+([a-zA-Z0-9]+(?:,[a-zA-Z0-9]+)*)\s+FROM\s+([a-zA-Z0-9]+)(?:\s+WHERE\s+([a-zA-Z0-9]+)([=<>])'([^']*)')?"; //Mikel
 
             const string insertPattern = @"INSERT\s+INTO\s+(\w+)\s+VALUES\s+\(((?:'([^']*)',)*(?:'([^']*)'))\)"; //kaiet
 
-            const string dropTablePattern = @"DROP\s+TABLE\s+(\w+)"; //fabian
+            const string dropTablePattern = @"DROP\s+TABLE\s+([a-zA-Z0-9]+)"; //fabian
 
             //Note: The parsing of CREATE TABLE should accept empty columns "()"
             //And then, an execution error should be given if a CreateTable without columns is executed
@@ -28,9 +28,9 @@ namespace DbManager
 
 
             //TODO DEADLINE 4
-            const string createSecurityProfilePattern = null; //mikel
+            const string createSecurityProfilePattern = @"CREATE\s+SECURITY\s+PROFILE\s+(\w+)\s*"; //mikel
 
-            const string dropSecurityProfilePattern = null; //mikel
+            const string dropSecurityProfilePattern = @"DROP\s+SECURITY\s+PROFILE\s+(\w+)\s*"; //mikel
 
             const string grantPattern = @"GRANT\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+([A-Za-z]+)"; //julen
 
@@ -88,20 +88,12 @@ namespace DbManager
             }
            
 
-            match = Regex.Match(miniSQLQuery, dropTablePattern);
+           match = Regex.Match(miniSQLQuery, dropTablePattern);
             if (match.Success)
             {
                 if (match.Length != miniSQLQuery.Length) { return null; }
 
-                if (match.Groups[1].Value.Length == 0 || match.Groups[1].Value.Length == 1)
-                {
-                    return null;
-                }
-                else
-                {
-                    String nombreTabla = match.Groups[1].Value;
-                    return new DropTable(match.Groups[1].Value);
-                }
+                return new DropTable(match.Groups[1].Value);
             }
             
 
@@ -289,7 +281,29 @@ namespace DbManager
                 return (new Revoke(match.Groups[1].Value, match.Groups[2].Value, match.Groups[3].Value));
             }
 
-            return null;
+            match = Regex.Match(miniSQLQuery, createSecurityProfilePattern);
+
+            if (match.Success)
+            {
+
+                if (match.Length != miniSQLQuery.Length) { return null; }
+
+                string nombrePerfil = match.Groups[1].Value;
+
+                return new CreateSecurityProfile(nombrePerfil);
+            }
+
+            match = Regex.Match(miniSQLQuery, dropSecurityProfilePattern);
+
+            if (match.Success)
+            {
+
+                string nombrePerfil = match.Groups[1].Value;
+
+                return new DropSecurityProfile(nombrePerfil);
+            }
+
+                return null;
         }
 
 

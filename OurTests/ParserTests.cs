@@ -339,5 +339,36 @@ namespace OurTests
 
 
         }
+
+        [Fact]
+
+        public void createanddropSecurityProfile()
+        {
+            Object obj;
+
+            obj = MiniSQLParser.Parse("CREATE SECURITY PROFILE farlopicius");
+            Assert.True(obj is CreateSecurityProfile);
+            obj = MiniSQLParser.Parse("DROP SECURITY PROFILE farlopicius");
+            Assert.True(obj is DropSecurityProfile);
+
+            obj = MiniSQLParser.Parse("create SECURITy PROFILE egucci");
+            Assert.False(obj is CreateSecurityProfile);
+            Assert.Null(obj);
+            obj = MiniSQLParser.Parse("DROP SEcuRITY PROFilE egucci");
+            Assert.False(obj is DropSecurityProfile);
+            Assert.Null(obj);
+
+            obj = MiniSQLParser.Parse("CREATE SECURITY PROFILE");
+            Assert.False(obj is CreateSecurityProfile);
+            Assert.Null(obj);
+            obj = MiniSQLParser.Parse("DROP SECURITY PROFILE");
+            Assert.False(obj is DropSecurityProfile);
+            Assert.Null(obj);
+
+
+        }
+
     }
+
+        
 }
