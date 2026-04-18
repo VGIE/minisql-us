@@ -27,28 +27,17 @@ namespace DbManager
         {
             //TODO DEADLINE 3: Run the query and return the table as a string (or the last error in the database)
 
-            Table table = database.TableByName(Table);
-
-            
-            if (table == null)
-            {
-
-
-                return database.LastErrorMessage;
-
-            }
-
             Table resultado = database.Select(Table, Columns, Where);
-
 
             if (resultado != null)
             {
                 return resultado.ToString();
 
-            } else {
+            }
+            else
+            {
                 return database.LastErrorMessage;
             }
-
         }
-        }
+    }
     }
