@@ -40,15 +40,46 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Revoke this privilege on this table. Return false if there is an error, true otherwise
             
-            return false;
-            
+            if (PrivilegesOn.ContainsKey(table) == false)
+            {
+                return false;
+            }
+
+            if (PrivilegesOn[table].Contains(privilege) == true)
+            {
+                PrivilegesOn[table].Remove(privilege);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
+            
+        
 
         public bool IsGrantedPrivilege(string table, Privilege privilege)
         {
             //TODO DEADLINE 5: Return whether this profile is granted this privilege on this table
             
-            return false;
+            if (this.Name == AdminProfileName)
+            {
+                return true;
+            }
+
+            if (PrivilegesOn.ContainsKey(table) == false)
+            {
+                return false;
+            }
+
+            if (PrivilegesOn[table].Contains(privilege) == true)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
