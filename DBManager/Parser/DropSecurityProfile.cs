@@ -20,7 +20,11 @@ namespace DbManager
         {
             //TODO DEADLINE 5: Run the query and return the appropriate message
             //UsersProfileIsNotGrantedRequiredPrivilege, SecurityProfileDoesNotExistError, DropSecurityProfileSuccess
-            
+
+            //      bool resultadoDrop = database.(ProfileName);
+
+            //    return resultadoDrop.ToString();
+
             return null;
             
         }
