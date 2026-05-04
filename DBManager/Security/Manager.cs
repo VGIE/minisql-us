@@ -52,6 +52,7 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Add this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
+            if(!IsUserAdmin()) { return; }
             Profile perfilBuscado = ProfileByName(profileName);
 
             if (perfilBuscado != null)
@@ -65,7 +66,7 @@ namespace DbManager.Security
         {
             //TODO DEADLINE 5: Remove this privilege on this table to the profile with this name
             //If the profile or the table don't exist, do nothing
-
+            if (!IsUserAdmin()) { return; }
             Profile perfilBuscado = ProfileByName(profileName);
 
             if (perfilBuscado != null)
@@ -94,7 +95,7 @@ namespace DbManager.Security
         public void AddProfile(Profile profile)
         {
             //TODO DEADLINE 5: Add this profile
-
+            if (!IsUserAdmin()) { return; }
             Profiles.Add(profile);
             
         }
@@ -152,7 +153,8 @@ namespace DbManager.Security
         public bool RemoveProfile(string profileName)
         {
             //TODO DEADLINE 5: Remove this profile
-            foreach( Profile p in Profiles)
+            if (!IsUserAdmin()) { return false; }
+            foreach ( Profile p in Profiles)
             {
                 if (p.Name.Equals(profileName))
                 {
@@ -166,15 +168,111 @@ namespace DbManager.Security
         public static Manager Load(string databaseName, string username)
         {
             //TODO DEADLINE 5: Load all the profiles and users saved for this database. The Manager instance should be created with the given username
-            
-            return null;
+            try
+            {
+                if (databaseName != null && !databaseName.Equals(""))
+                {
+                    string[] files = Directory.GetFiles(databaseName, "*.txt");
+                    Manager mg = new Manager(username);
+                    String fileNoExtension;
+                    foreach (string file in files)
+                    {
+                        fileNoExtension = System.IO.Path.GetFileNameWithoutExtension(file);
+                        bool exists = System.IO.File.Exists(file); //checks that the file exists
+                        if (!exists) { return null; }
+
+                        TextReader reader = System.IO.File.OpenText(file); //opens an existing file
+                        
+                        Profile p = new Profile();
+                        String line = reader.ReadLine();
+                        p.Name = line;
+
+                        String tName;
+
+                        line=reader.ReadLine();
+                        while (line != null && !line.Equals(""))
+                        {
+                            string[] splited = line.Split("%");
+                            tName = splited[0];
+                            string[] privs = splited[1].Split(",");
+                            for(int i=0; i < privs.Length - 1; i++)
+                            {
+                                p.GrantPrivilege(tName, Enum.Parse<Privilege>(privs[i]));
+                            }
+                            line = reader.ReadLine();
+                        }
+
+                        line = reader.ReadLine();
+
+                        List<User> usrs = new List<User>();
+                        User u;
+                        while (line != null && !line.Equals(""))
+                        {
+                            u = new User();
+                            string[] a = line.Split(",");
+                            u.Username = a[0];
+                            u.EncryptedPassword = a[1];
+                            usrs.Add(u);
+                            line = reader.ReadLine();
+                        }
+                        p.Users = usrs;
+                        mg.AddProfile(p);
+                        reader.Close();
+                            
+                    }
+                    return mg;
+                }
+                else { return null; }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
             
         }
 
         public void Save(string databaseName)
         {
             //TODO DEADLINE 5: Save all the profiles and users/passwords created for this database.
-            
+            try
+            {
+                if (databaseName == null || databaseName.Equals("")) { return; }
+
+                if (!Directory.Exists(databaseName))
+                {
+                    Directory.CreateDirectory(databaseName);
+                }
+
+                if (Profiles != null && Profiles.Count != 0)
+                {
+                    foreach (Profile p in Profiles)
+                    {
+                        TextWriter writer = System.IO.File.CreateText(databaseName + "\\" + p.Name + ".txt"); //creates a new text file
+                        writer.WriteLine(p.Name);
+                        var keys = p.PrivilegesOn.Keys;
+                        foreach(String x in keys)
+                        {
+                            writer.Write(x + "%");
+                            foreach(Privilege pr in p.PrivilegesOn[x])
+                            {
+                                writer.Write(pr+",");
+                            }
+                            writer.WriteLine();
+                        }
+                        writer.WriteLine();
+                        foreach(User u in p.Users)
+                        {
+                            writer.WriteLine(u.Username + "," + u.EncryptedPassword);
+                        }
+                        writer.Close();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                return;
+            }
         }
     }
 }
