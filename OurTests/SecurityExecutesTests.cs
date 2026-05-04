@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DbManager;
 
 namespace OurTests
 {
@@ -35,12 +36,14 @@ namespace OurTests
         [Fact]
         public void CreateProfileTest()
         {
-
+            Database db = new Database("", "");
+            
         }
 
         [Fact]
         public void DropProfileTest()
         {
+
 
         }
 
