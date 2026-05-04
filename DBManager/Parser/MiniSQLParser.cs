@@ -28,9 +28,9 @@ namespace DbManager
 
 
             //TODO DEADLINE 4
-            const string createSecurityProfilePattern = @"CREATE\s+SECURITY\s+PROFILE\s+(\w+)\s*"; //mikel
+            const string createSecurityProfilePattern = @"CREATE\s+SECURITY\s+PROFILE\s+([a-zA-Z0-9]+)\s*"; //mikel
 
-            const string dropSecurityProfilePattern = @"DROP\s+SECURITY\s+PROFILE\s+(\w+)\s*"; //mikel
+            const string dropSecurityProfilePattern = @"DROP\s+SECURITY\s+PROFILE\s+([a-zA-Z0-9]+)\s*"; //mikel
 
             const string grantPattern = @"GRANT\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+([A-Za-z]+)"; //julen
 
@@ -298,6 +298,8 @@ namespace DbManager
 
             if (match.Success)
             {
+
+                if (match.Length != miniSQLQuery.Length) { return null; }
 
                 string nombrePerfil = match.Groups[1].Value;
 
