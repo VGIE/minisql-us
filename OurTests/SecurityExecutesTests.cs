@@ -31,7 +31,23 @@ namespace OurTests
         [Fact]
         public void RevokeTest()
         {
+            //Crear un usuario y una tabala, darle los permisos sobre la tabla con GrantPrivilege
+            
+            User usuarioTest = new User("Test", "1234");
+            Profile perfilTest = new Profile { Name = "UsuarioPrueba" };
+            perfilTest.Users.Add(usuarioTest);
+            perfilTest.GrantPrivilege("Coches", Privilege.Select);
 
+            
+            Manager man = new Manager("Admin");
+
+            
+            Profile adminP = new Profile { Name = "Admin" };
+            adminP.Users.Add(new User("Admin", "supersecret"));
+            man.AddProfile(adminP);
+
+            
+            man.AddProfile(perfilTest);
         }
 
        /* [Fact]
