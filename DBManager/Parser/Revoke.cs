@@ -58,6 +58,7 @@ namespace DbManager
             }
             else
             {
+                database.SecurityManager.RevokePrivilege(ProfileName, TableName, privilegio);
                 return Constants.RevokePrivilegeSuccess;
             }
             

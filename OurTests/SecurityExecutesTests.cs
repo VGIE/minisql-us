@@ -47,23 +47,33 @@ namespace OurTests
         public void RevokeTest()
         {
             //Crear un usuario y una tabala, darle los permisos sobre la tabla con GrantPrivilege
-            
+            Database db = Database.CreateTestDatabase();
+
+
             User usuarioTest = new User("Test", "1234");
             Profile perfilTest = new Profile { Name = "UsuarioPrueba" };
             perfilTest.Users.Add(usuarioTest);
-            perfilTest.GrantPrivilege("Coches", Privilege.Select);
+            db.SecurityManager.AddProfile(perfilTest);
+            db.SecurityManager.GrantPrivilege(perfilTest.Name, "TestTable", Privilege.Select);
 
-            
-            Manager man = new Manager("Admin");
+            Revoke prueba = new Revoke("SELECT", db.TableByName("TestTable").Name, perfilTest.Name);
+            Assert.Equal(Constants.RevokePrivilegeSuccess, prueba.Execute(db));
 
-            
-            Profile adminP = new Profile { Name = "Admin" };
-            adminP.Users.Add(new User("Admin", "supersecret"));
-            man.AddProfile(adminP);
+            User usuarioTest2 = new User("Pablo", "1234");
+            Profile perfilTest2 = new Profile { Name = "UsuarioPablo" };
+            perfilTest2.Users.Add(usuarioTest2);
+            Revoke prueba2 = new Revoke("SELECT", db.TableByName("TestTable").Name, perfilTest2.Name);
+            Assert.Equal(Constants.SecurityProfileDoesNotExistError, prueba2.Execute(db));
 
-            
-            man.AddProfile(perfilTest);
+            User usuarioTest3 = new User("Luis", "1234");
+            Profile perfilTest3 = new Profile { Name = "UsuarioLuis" };
+            perfilTest3.Users.Add(usuarioTest3);
+            db.SecurityManager.AddProfile(perfilTest3);
+            db.SecurityManager.GrantPrivilege(perfilTest3.Name, "TestTable", Privilege.Delete);
+            Revoke prueba3 = new Revoke("SELECT", db.TableByName("TestTable").Name, perfilTest2.Name);
+            Assert.Equal(Constants.SecurityProfileDoesNotExistError, prueba3.Execute(db));
         }
+
 
        /* [Fact]
         public void CreateProfileTest()
