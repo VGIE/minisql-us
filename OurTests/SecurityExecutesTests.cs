@@ -76,7 +76,7 @@ namespace OurTests
         }
 
 
-       /* [Fact]
+       
         [Fact]
         public void CreateProfileTest()
         {
@@ -117,7 +117,7 @@ namespace OurTests
 
             Assert.Equal(Constants.DropSecurityProfileSuccess, resultado2);
 
-            Assert.Null(db.SecurityManager.ProfileByName("Novatos");
+            Assert.Null(db.SecurityManager.ProfileByName("Novatos"));
 
             DropSecurityProfile query3 = new DropSecurityProfile("Kaiets");
             string resultado3 = query3.Execute(db);
