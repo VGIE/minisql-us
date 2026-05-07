@@ -26,15 +26,20 @@ namespace DbManager
         {
             //TODO DEADLINE 5: Run the query and return the appropriate message
             //UsersProfileIsNotGrantedRequiredPrivilege, SecurityProfileDoesNotExistError, RevokePrivilegeSuccess, 
+
+            const string PrivilegeDelete = "DELETE";
+            const string PrivilegeInsert = "INSERT";
+            const string PrivilegeSelect = "SELECT";
+
             Privilege privilegio;
-            if (PrivilegeName == "DELETE")
+            if (PrivilegeName.Equals(PrivilegeDelete))
             {
                 privilegio = Privilege.Delete;
-            } else if (PrivilegeName == "INSERT")
+            } else if (PrivilegeName.Equals(PrivilegeInsert))
             {
                 privilegio = Privilege.Insert;
             }
-            else if (PrivilegeName == "SELECT")
+            else if (PrivilegeName.Equals(PrivilegeSelect))
             {
                 privilegio = Privilege.Select;
             }
