@@ -17,28 +17,29 @@ namespace DbManager
             ProfileName = profileName;
 
         }
-        public string Execute(Database database)
+       public string Execute(Database database)
         {
             //TODO DEADLINE 5: Run the query and return the appropriate message
             //UsersProfileIsNotGrantedRequiredPrivilege, CreateSecurityProfileSuccess
 
-            if (!database.SecurityManager.IsUserAdmin())
+            if (database.SecurityManager.IsUserAdmin() == false)
             {
                 return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
             }
 
             if (database.SecurityManager.ProfileByName(ProfileName) != null)
             {
-
-                return Constants.ProfileAlreadyHasPrivilege;
+               
+                return Constants.ProfileAlreadyHasPrivilege; 
             }
 
-            Profile profile = database.SecurityManager.ProfileByName(ProfileName);
+           
+            Profile profile = new Profile();
+            profile.Name = ProfileName;
 
             database.SecurityManager.AddProfile(profile);
 
             return Constants.CreateSecurityProfileSuccess;
-
         }
 
     }

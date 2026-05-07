@@ -26,38 +26,36 @@ namespace DbManager
             //TODO DEADLINE 5: Run the query and return the appropriate message
             //UsersProfileIsNotGrantedRequiredPrivilege, SecurityProfileDoesNotExistError, PrivilegeDoesNotExistError, GrantPrivilegeSuccess, ProfileAlreadyHasPrivilege
             
-            Privilege privilegeEnum;
+           Privilege privilegeEnum;
             bool isValidPrivilege = Enum.TryParse<Privilege>(PrivilegeName, true, out privilegeEnum);
             
             if (isValidPrivilege == false)
             {
-                return "PrivilegeDoesNotExistError"; 
+                // Usamos la constante en vez del texto entre comillas
+                return Constants.PrivilegeDoesNotExistError; 
             }
 
-            // 2. Comprobamos si el usuario actual tiene permisos de Administrador
             if (database.SecurityManager.IsUserAdmin() == false)
             {
-                return "UsersProfileIsNotGrantedRequiredPrivilege";
+                return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
             }
-
            
             Profile targetProfile = database.SecurityManager.ProfileByName(ProfileName);
             
             if (targetProfile == null)
             {
-                return "SecurityProfileDoesNotExistError";
+                return Constants.SecurityProfileDoesNotExistError;
             }
-
           
             bool success = targetProfile.GrantPrivilege(TableName, privilegeEnum);
 
             if (success == true)
             {
-                return "GrantPrivilegeSuccess";
+                return Constants.GrantPrivilegeSuccess;
             }
             else
             {
-                return "ProfileAlreadyHasPrivilege";
+                return Constants.ProfileAlreadyHasPrivilege;
             }
         }
             

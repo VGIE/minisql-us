@@ -13,7 +13,7 @@ namespace OurTests
         [Fact]
         public void GrantTest()
         {
-           /* Database db = new Database("admin", "admin");
+           Database db = new Database("admin", "admin");
             CreateSecurityProfile createQuery = new CreateSecurityProfile("Nose");
             createQuery.Execute(db); 
             Grant query1 = new Grant("SELECT", "Tabla1", "Nose");
@@ -28,7 +28,7 @@ namespace OurTests
             Grant query4 = new Grant("SALTAR", "Tabla1", "Nose");
             string result4 = query4.Execute(db);
             Assert.Equal(Constants.PrivilegeDoesNotExistError, result4);
-            */
+            
         }
 
         [Fact]
