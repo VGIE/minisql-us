@@ -25,7 +25,12 @@ namespace DbManager
             //DEADLINE 1.B: Initalize the member variables
             m_username = adminUsername;
             //instanciar manager!!! (SECURITY)
+            SecurityManager = new Manager(adminUsername);
 
+            Profile adminProfile = new Profile();
+            adminProfile.Name = Profile.AdminProfileName;
+            adminProfile.Users.Add(new User(adminUsername, adminPassword));
+            SecurityManager.Profiles.Add(adminProfile);
         }
 
         public bool AddTable(Table table)
@@ -355,7 +360,15 @@ namespace DbManager
                         db.AddTable(t);
                         reader.Close();
                     }
-                    return db;
+                    if(!db.SecurityManager.IsPasswordCorrect(username, password)) 
+                    { 
+                        return null; 
+                    }
+                    else
+                    {
+                        return db;
+                    }
+
                 }
             }
             catch (Exception e)

@@ -254,11 +254,14 @@ namespace DbManager.Security
                         foreach(String x in keys)
                         {
                             writer.Write(x + "%");
-                            foreach(Privilege pr in p.PrivilegesOn[x])
-                            {
-                                writer.Write(pr+",");
+                            if(p.PrivilegesOn != null && p.PrivilegesOn.Count != 0)
+                            { 
+                                foreach(Privilege pr in p.PrivilegesOn[x])
+                                {
+                                    writer.Write(pr+",");
+                                }
+                                writer.WriteLine();
                             }
-                            writer.WriteLine();
                         }
                         writer.WriteLine();
                         foreach(User u in p.Users)
@@ -273,6 +276,45 @@ namespace DbManager.Security
             {
                 return;
             }
+        }
+
+        public static bool AreEqual(Manager m1, Manager m2)
+        {
+            if(m1 == null || m2 == null || !m1.m_username.Equals(m2.m_username)) {  return false; }
+
+            List<Profile> p1 = m1.Profiles, p2 = m2.Profiles;
+            if (p1 == null || p2 == null) { return false; }
+            if (p1.Count == p2.Count)
+            {
+                String toCompare1 = toStringProfiles(p1), toCompare2 = toStringProfiles(p2);
+                return (toCompare1.Equals(toCompare2));
+            }
+            return false;
+        }
+
+        public static string toStringProfiles (List<Profile> Profiles)
+        {
+            string result = "";
+                foreach (Profile p in Profiles)
+                {
+                result += p.Name;
+                var keys = p.PrivilegesOn.Keys;
+                foreach (String x in keys)
+                {
+                    result += x + "%";
+                    foreach (Privilege pr in p.PrivilegesOn[x])
+                    {
+                        result += pr + ",";
+                    }
+                    result += "\n";
+                    }
+                    result += "\n";
+                    foreach (User u in p.Users)
+                    {
+                        result += u.Username + "," + u.EncryptedPassword;
+                    }
+                }
+            return result;
         }
     }
 }
