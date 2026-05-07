@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,22 +50,22 @@ namespace OurTests
 
         }
 
-       /* [Fact]
+        [Fact]
         public void CreateProfileTest()
         {
-            Database db = new Database("", "");
+            Database db = new Database("admin", "admin");
 
-            CreateSecurityProfile query = new CreateSecurityProfile("Novatos");
+            CreateSecurityProfile query1 = new CreateSecurityProfile("Novatos");
 
-            string result = query.Execute(db);
+            string resultado1 = query1.Execute(db);
 
-            Assert.Equal(Constants.CreateSecurityProfileSuccess, result);
+            Assert.Equal(Constants.CreateSecurityProfileSuccess, resultado1);
 
             Assert.NotNull(db.SecurityManager.ProfileByName("Novatos"));
 
             CreateSecurityProfile query2 = new CreateSecurityProfile("Novatos");
 
-            string result2 = query.Execute(db);
+            string result2 = query2.Execute(db);
 
             Assert.Equal(Constants.ProfileAlreadyHasPrivilege, result2);
 
@@ -75,27 +76,29 @@ namespace OurTests
         [Fact]
         public void DropProfileTest()
         {
-            Database db = new Database("","");
+            Database db = new Database("admin","admin");
 
-            CreateSecurityProfile query = new CreateSecurityProfile("Novatos");
+            CreateSecurityProfile query1 = new CreateSecurityProfile("Novatos");
 
-            string result = query.Execute(db);
-
-            Assert.Equal(Constants.CreateSecurityProfileSuccess, result);
+            string resultado1 = query1.Execute(db);
 
             Assert.NotNull(db.SecurityManager.ProfileByName("Novatos"));
 
-            CreateSecurityProfile query2 = new CreateSecurityProfile("Novatos");
+            DropSecurityProfile query2 = new DropSecurityProfile("Novatos");
 
-            string result2 = query.Execute(db);
+            string resultado2 = query2.Execute(db);
+
+            Assert.Equal(Constants.DropSecurityProfileSuccess, resultado2);
+
+            Assert.Null(db.SecurityManager.ProfileByName("Novatos");
+
+            DropSecurityProfile query3 = new DropSecurityProfile("Kaiets");
+            string resultado3 = query3.Execute(db);
+
+            Assert.Equal(Constants.SecurityProfileDoesNotExistError, resultado3);
 
 
-
-
-
-
-
-        }*/
+        }
 
     }
 }
