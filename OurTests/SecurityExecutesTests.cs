@@ -124,6 +124,9 @@ namespace OurTests
 
             Assert.Equal(Constants.SecurityProfileDoesNotExistError, resultado3);
 
+            Assert.Null(db.SecurityManager.ProfileByName("Kaiets"));
+           
+
 
         }
 
