@@ -216,7 +216,7 @@ namespace DbManager.Security
                             line = reader.ReadLine();
                         }
                         p.Users = usrs;
-                        mg.AddProfile(p);
+                        mg.Profiles.Add(p);
                         reader.Close();
                             
                     }
