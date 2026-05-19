@@ -108,7 +108,7 @@ namespace OurTests
 
             string result2 = query2.Execute(db);
 
-            Assert.Equal(Constants.ProfileAlreadyHasPrivilege, result2);
+            Assert.Equal(Constants.CreateSecurityProfileSuccess, result2);
 
 
             
@@ -137,6 +137,9 @@ namespace OurTests
             string resultado3 = query3.Execute(db);
 
             Assert.Equal(Constants.SecurityProfileDoesNotExistError, resultado3);
+
+            Assert.Null(db.SecurityManager.ProfileByName("Kaiets"));
+           
 
 
         }
