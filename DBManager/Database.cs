@@ -311,6 +311,7 @@ namespace DbManager
                         writer.Close();
                     }
                 }
+                SecurityManager.Save(databaseName);
                 return true;            
             }
             catch (Exception e)
@@ -319,7 +320,6 @@ namespace DbManager
             }
             //DEADLINE 5: Save the SecurityManager so that it can be loaded with the database in Load()
 
-            return false;
 
         }
 
@@ -360,9 +360,11 @@ namespace DbManager
                         db.AddTable(t);
                         reader.Close();
                     }
-                    if(!db.SecurityManager.IsPasswordCorrect(username, password)) 
-                    { 
-                        return null; 
+                    db.SecurityManager = Manager.Load(databaseName, username);
+                    db.m_username = username;
+                    if (db.SecurityManager == null || !db.SecurityManager.IsPasswordCorrect(username, password))
+                    {
+                        return null;
                     }
                     else
                     {

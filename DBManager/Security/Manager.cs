@@ -172,7 +172,8 @@ namespace DbManager.Security
             {
                 if (databaseName != null && !databaseName.Equals(""))
                 {
-                    string[] files = Directory.GetFiles(databaseName, "*.txt");
+                    string carpeta = databaseName + "\\ArchivosSecurity";
+                    string[] files = Directory.GetFiles(carpeta, "*.txt");
                     Manager mg = new Manager(username);
                     String fileNoExtension;
                     foreach (string file in files)
@@ -238,17 +239,19 @@ namespace DbManager.Security
             try
             {
                 if (databaseName == null || databaseName.Equals("")) { return; }
+                
+                string carpeta = databaseName + "\\ArchivosSecurity";
 
-                if (!Directory.Exists(databaseName))
+                if (!Directory.Exists(carpeta))
                 {
-                    Directory.CreateDirectory(databaseName);
+                    Directory.CreateDirectory(carpeta);
                 }
 
                 if (Profiles != null && Profiles.Count != 0)
                 {
                     foreach (Profile p in Profiles)
                     {
-                        TextWriter writer = System.IO.File.CreateText(databaseName + "\\" + p.Name + ".txt"); //creates a new text file
+                        TextWriter writer = System.IO.File.CreateText(carpeta + "\\" + p.Name + ".txt"); //creates a new text file
                         writer.WriteLine(p.Name);
                         var keys = p.PrivilegesOn.Keys;
                         foreach(String x in keys)

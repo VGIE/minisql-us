@@ -261,8 +261,7 @@ namespace OurTests
             Assert.False(db.Save(null));
 
             db.Save("guardadoTest");
-            //Assert.True(Database.AreEqual(db, Database.Load("guardadoTest", "", "")));
-
+            Assert.True(Database.AreEqual(db, Database.Load("guardadoTest", Database.AdminUsername, Database.AdminPassword)));
         }
     }
 }
