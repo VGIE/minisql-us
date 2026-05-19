@@ -94,7 +94,7 @@ namespace OurTests
 
             string result2 = query2.Execute(db);
 
-            Assert.Equal(Constants.ProfileAlreadyHasPrivilege, result2);
+            Assert.Equal(Constants.CreateSecurityProfileSuccess, result2);
 
 
             

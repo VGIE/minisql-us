@@ -30,7 +30,7 @@ namespace DbManager
             if (database.SecurityManager.ProfileByName(ProfileName) != null)
             {
                
-                return Constants.ProfileAlreadyHasPrivilege; 
+                return Constants.CreateSecurityProfileSuccess; 
             }
 
            
