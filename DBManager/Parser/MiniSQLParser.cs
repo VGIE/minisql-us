@@ -36,7 +36,7 @@ namespace DbManager
 
             const string revokePattern = @"REVOKE\s+(DELETE|INSERT|SELECT|UPDATE)\s+ON\s+(\w+)\s+TO\s+([A-Za-z]+)"; //fabian
 
-            const string addUserPattern = @"ADD\s+USER\s+\(([A-Za-z]+),([A-Za-z]+),([A-Za-z]+)\)"; //kaiet
+            const string addUserPattern = @"ADD\s+USER\s+\(([A-Za-z]+),([A-Za-z0-9]+),([A-Za-z]+)\)"; //kaiet
 
             const string deleteUserPattern = @"DELETE\s+USER\s+([A-Za-z]+)"; //kaiet
 

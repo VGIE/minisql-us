@@ -98,7 +98,7 @@ namespace OurTests
             Manager managerCargado = Manager.Load("guardadoSecurityTest", Profile.AdminProfileName);
 
             Manager managerOriginal = db.SecurityManager;
-            //Assert.True(Manager.AreEqual(managerOriginal, managerCargado));
+            Assert.True(Manager.AreEqual(managerOriginal, managerCargado));
         }
 
     }

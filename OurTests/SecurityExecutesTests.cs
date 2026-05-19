@@ -33,16 +33,30 @@ namespace OurTests
         }
 
         [Fact]
-        public void AddUserTest()
+        public void AddDeleteUserTest()
         {
+            Database db = new Database("admin", "admin");
 
+            CreateSecurityProfile createQuery = new CreateSecurityProfile("US");
+            createQuery.Execute(db);
+
+            AddUser a1 = new AddUser("kaiet", "holaadios", "US");
+            Assert.Equal(Constants.AddUserSuccess, a1.Execute(db));
+            Assert.NotNull(db.SecurityManager.UserByName("kaiet"));
+
+            AddUser a2 = new AddUser("mikel", "adioshola", "Inventao");
+            Assert.Equal(Constants.SecurityProfileDoesNotExistError, a2.Execute(db));
+            Assert.Null(db.SecurityManager.UserByName("mikel"));
+
+            DeleteUser d1 = new DeleteUser("kaiet");
+            Assert.Equal(Constants.DeleteUserSuccess, d1.Execute(db));
+            Assert.Null(db.SecurityManager.UserByName("kaiet"));
+
+            DeleteUser d2 = new DeleteUser("quenooo");
+            Assert.Equal(Constants.UserDoesNotExistError, d2.Execute(db));
         }
 
-        [Fact]
-        public void DeleteUserTest()
-        {
 
-        }
 
         [Fact]
         public void RevokeTest()

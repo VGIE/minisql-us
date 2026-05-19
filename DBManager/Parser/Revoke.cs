@@ -52,7 +52,7 @@ namespace DbManager
             {
                 return Constants.SecurityProfileDoesNotExistError;
             }
-            else if(!database.SecurityManager.ProfileByName(ProfileName).PrivilegesOn[TableName].Contains(privilegio))
+            else if(!database.SecurityManager.ProfileByName(ProfileName).PrivilegesOn.ContainsKey(TableName) || !database.SecurityManager.ProfileByName(ProfileName).PrivilegesOn[TableName].Contains(privilegio))
             {
                 return Constants.UsersProfileIsNotGrantedRequiredPrivilege;
             }
