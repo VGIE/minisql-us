@@ -27,6 +27,8 @@ namespace DbManager
         {
             //TODO DEADLINE 3: Run the query and return the table as a string (or the last error in the database)
 
+            if (!database.SecurityManager.IsGrantedPrivilege(database.getUsername(), Table, Security.Privilege.Select)) { return Constants.UsersProfileIsNotGrantedRequiredPrivilege; }
+
             Table resultado = database.Select(Table, Columns, Where);
 
             if (resultado != null)

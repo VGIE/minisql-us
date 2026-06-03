@@ -21,6 +21,8 @@ namespace DbManager
         {
             //TODO DEADLINE 3: Run the query and return the appropriate message
             //UpdateSuccess or the last error in the database
+            if (!database.SecurityManager.IsGrantedPrivilege(database.getUsername(), Table, Security.Privilege.Update)) { return Constants.UsersProfileIsNotGrantedRequiredPrivilege; }
+
             bool exito = database.Update(this.Table, this.Columns, this.Where);
             if(exito)
             {

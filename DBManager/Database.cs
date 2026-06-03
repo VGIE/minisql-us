@@ -11,6 +11,10 @@ namespace DbManager
         private List<Table> Tables = new List<Table>();
         private string m_username;
 
+        public string getUsername()
+        {
+            return m_username;
+        }
         public string LastErrorMessage { get; private set; }
 
         public Manager SecurityManager { get; private set; }

@@ -22,7 +22,9 @@ namespace DbManager
         {
             //TODO DEADLINE 3: Run the query and return the appropriate message
             //InsertSuccess or the last error in the database
-            
+
+            if (!database.SecurityManager.IsGrantedPrivilege(database.getUsername(), Table, Security.Privilege.Insert)) { return Constants.UsersProfileIsNotGrantedRequiredPrivilege; }
+
             database.Insert(Table, Values);
             return database.LastErrorMessage;
             

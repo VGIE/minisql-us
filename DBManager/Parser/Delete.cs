@@ -20,7 +20,7 @@ namespace DbManager.Parser
         {
             //TODO DEADLINE 3: Run the query and return the appropriate message
             //DeleteSuccess or the last error in the database
-
+            if (!database.SecurityManager.IsGrantedPrivilege(database.getUsername(), Table, Security.Privilege.Delete)) { return Constants.UsersProfileIsNotGrantedRequiredPrivilege; }
             database.DeleteWhere(Table, Where);
             return database.LastErrorMessage;
             
